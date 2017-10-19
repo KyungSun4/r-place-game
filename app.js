@@ -12,36 +12,40 @@ app.use('/client', express.static(__dirname + '/client'));
 
 serv.listen(2000);
 var map2;
+var reset = false;
 
 MongoClient.connect(url, function(err, db) {
   if (err) throw err;
-  db.collection('map', function(err, collection) {
-    collection.remove({}, function(err, removed) {});
-  });
-  db.createCollection("map", function(err, res) {
-    if (err) throw err;
-    console.log("Collection created!");
-    db.close();
-  }); 
-  var map = [];
-  for (var x = 0; x < 10; x++) {
-    map.push([]);
-    for (var y = 0; y < 10; y++) {
-      map[x].push({
-        x: x,
-        y: y
-      });
+
+  if (reset) {
+    db.collection('map', function(err, collection) {
+      collection.remove({}, function(err, removed) {});
+    });
+    db.createCollection("map", function(err, res) {
+      if (err) throw err;
+      console.log("Collection created!");
+      db.close();
+    }); 
+    var map = [];
+    for (var x = 0; x < 10; x++) {
+      map.push([]);
+      for (var y = 0; y < 10; y++) {
+        map[x].push({
+          x: x,
+          y: y
+        });
+      }
     }
+    db.collection("map").insertOne({
+      num: 0,
+      m: map
+    }, function(err, res) {
+      if (err) throw err;
+      console.log("1 document inserted");
+      db.close();
+    });
   }
 
-  db.collection("map").insertOne({
-    num: 0,
-    m: map
-  }, function(err, res) {
-    if (err) throw err;
-    console.log("1 document inserted");
-    db.close();
-  });
   db.collection("map").find({
     num: 0
   }).toArray(function(err, result) {
@@ -58,5 +62,14 @@ MongoClient.connect(url, function(err, db) {
 
 var io = require('socket.io')(serv, {});
 io.sockets.on('connection', function(socket) {
-  socket.emit('start',map2);
+  MongoClient.connect(url, function(err, db) {
+    db.collection("map").find({
+      num: 0
+    }).toArray(function(err, result) {
+      if (err) throw err;
+      map2 = result[0].m;
+      db.close();
+    });
+  });
+  socket.emit('start', map2);
 });
