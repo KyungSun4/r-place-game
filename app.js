@@ -2,6 +2,17 @@ var MongoClient = require('mongodb').MongoClient;
 //Create a database named "mydb":
 var url = "mongodb://localhost:27017/mydb";
 
+var express = require('express');
+var app = express();
+var serv = require('http').Server(app);
+app.get('/', function(reg, res) {
+  res.sendFile(__dirname + '/client/index.html');
+});
+app.use('/client', express.static(__dirname + '/client'));
+
+serv.listen(2000);
+var map2;
+
 MongoClient.connect(url, function(err, db) {
   if (err) throw err;
   db.collection('map', function(err, collection) {
@@ -35,11 +46,17 @@ MongoClient.connect(url, function(err, db) {
     num: 0
   }).toArray(function(err, result) {
     if (err) throw err;
-    for(x in result[0].m) {
-      for(y in result[0].m[x])
-      console.log(result[0].m[x][y]);
+    map2 = result[0].m;
+    for (x in result[0].m) {
+      for (y in result[0].m[x])
+        console.log(result[0].m[x][y]);
     }
-    
+
     db.close();
   });
+});
+
+var io = require('socket.io')(serv, {});
+io.sockets.on('connection', function(socket) {
+  socket.emit('start',map2);
 });
