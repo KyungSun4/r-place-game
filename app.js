@@ -12,20 +12,26 @@ app.use('/client', express.static(__dirname + '/client'));
 
 serv.listen(2000);
 var map2;
+
+//if true will create a new map in database
 var reset = false;
 
+//connect to database
 MongoClient.connect(url, function(err, db) {
   if (err) throw err;
-
+  //restarts whole game incliding database
   if (reset) {
+    //delete old maps
     db.collection('map', function(err, collection) {
       collection.remove({}, function(err, removed) {});
     });
+    //create new map
     db.createCollection("map", function(err, res) {
       if (err) throw err;
       console.log("Collection created!");
       db.close();
     }); 
+    //create map array
     var map = [];
     for (var x = 0; x < 10; x++) {
       map.push([]);
@@ -36,6 +42,7 @@ MongoClient.connect(url, function(err, db) {
         });
       }
     }
+    //puts map array in database
     db.collection("map").insertOne({
       num: 0,
       m: map
@@ -46,6 +53,7 @@ MongoClient.connect(url, function(err, db) {
     });
   }
 
+  //gets map form database and stores in map2
   db.collection("map").find({
     num: 0
   }).toArray(function(err, result) {
@@ -60,6 +68,7 @@ MongoClient.connect(url, function(err, db) {
   });
 });
 
+//on connection get map from database and send to user
 var io = require('socket.io')(serv, {});
 io.sockets.on('connection', function(socket) {
   MongoClient.connect(url, function(err, db) {
