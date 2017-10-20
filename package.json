@@ -1,0 +1,26 @@
+{
+  "name": "r-place-game",
+  "version": "1.0.0",
+  "description": "cs196 project",
+  "main": "app.js",
+  "dependencies": {
+    "express": "^4.15.4",
+    "mongo": "^0.1.0",
+    "mongodb": "^2.2.33",
+    "socket.io": "^2.0.3"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "console.log(\"test\")"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/CS196Illinois/r-place-game.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/CS196Illinois/r-place-game/issues"
+  },
+  "homepage": "https://github.com/CS196Illinois/r-place-game#readme"
+}

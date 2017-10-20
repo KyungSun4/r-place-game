@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
+<script>
+var map;
+var socket = io();
+console.log("hello");
+socket.on('start', function(data) {
+  map = data;
+  console.log(map);
+});
+
+</script>
+</html>
