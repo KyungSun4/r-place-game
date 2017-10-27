@@ -1,7 +1,8 @@
+"use strict";
 var MongoClient = require('mongodb').MongoClient;
 //Create a database named "mydb":
 var url = "mongodb://localhost:27017/mydb";
-const passport = require('passport');
+var passport = require('passport');
 var express = require('express');
 var app = express();
 var serv = require('http').Server(app);
