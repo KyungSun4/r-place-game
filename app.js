@@ -1,7 +1,7 @@
 var MongoClient = require('mongodb').MongoClient;
 //Create a database named "mydb":
 var url = "mongodb://localhost:27017/mydb";
-
+const passport = require('passport');
 var express = require('express');
 var app = express();
 var serv = require('http').Server(app);
@@ -82,3 +82,14 @@ io.sockets.on('connection', function(socket) {
   });
   socket.emit('start', map2);
 });
+
+// Passport Config
+require('./config/passport')(passport);
+// Passport Middleware
+app.use(passport.initialize());
+app.use(passport.session());
+
+
+
+let users = require('./routes/users');
+app.use('/users', users);
