@@ -1,16 +1,21 @@
 /*makes a new user when they log in and processes the log in */
 "use strict";
-const express = require('express');
-const router = express.Router();
+
+console.log('usersjs');
+var express = require('express');
+var router = express.Router();
 const bcrypt = require('bcryptjs');
 const passport = require('passport');
 
 // User Model
 let User = require('../models/user');
 
-// Form
-router.get('/register', function(req, res) {
 
+var path = require('path');
+
+// Form
+router.get('/', function(req, res) {
+  res.sendFile(path.resolve('client/register.html'));
 });
 
 // Process

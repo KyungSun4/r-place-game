@@ -6,10 +6,15 @@ var passport = require('passport');
 var express = require('express');
 var app = express();
 var serv = require('http').Server(app);
+
+let users = require('./routes/users');
+app.use('/users', users);
+
 app.get('/', function(reg, res) {
   res.sendFile(__dirname + '/client/index.html');
 });
 app.use('/client', express.static(__dirname + '/client'));
+
 
 serv.listen(2000);
 var map2;
@@ -84,13 +89,18 @@ io.sockets.on('connection', function(socket) {
   socket.emit('start', map2);
 });
 
+
+
+
+
+
+
+
+
+
+
 // Passport Config
 require('./config/passport')(passport);
 // Passport Middleware
 app.use(passport.initialize());
 app.use(passport.session());
-
-
-
-let users = require('./routes/users');
-app.use('/users', users);
