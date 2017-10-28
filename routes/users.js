@@ -19,8 +19,10 @@ router.get('/', function(req, res) {
 });
 
 // Process
-router.post('/register', function(req, res) {
-  const username = req.body.name;
+router.post('/', function(req, res) {
+	console.log(req);
+	//console.log(res);
+  const username = req.body.username;
   const password = req.body.password;
   const password2 = req.body.password2;
 
