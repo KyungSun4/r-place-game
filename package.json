@@ -4,9 +4,16 @@
   "description": "cs196 project",
   "main": "app.js",
   "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "bluebird": "^3.5.1",
+    "cookie-parser": "^1.4.3",
     "express": "^4.15.4",
+    "express-validator": "^4.2.1",
     "mongo": "^0.1.0",
     "mongodb": "^2.2.33",
+    "mongoose": "^4.12.4",
+    "passport": "^0.4.0",
+    "passport-local": "^1.0.0",
     "socket.io": "^2.0.3"
   },
   "devDependencies": {},

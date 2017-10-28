@@ -1,6 +1,8 @@
-
+'use strict';
 var mongoose = require('mongoose');
-var UserSchema = new mongoose.Schema({  
+mongoose.Promise = require('bluebird');
+//assert.equal(query.exec().constructor, require('bluebird'));
+var UserSchema = new mongoose.Schema({
   username: {
     type: String,
     unique: true,
@@ -18,4 +20,3 @@ var UserSchema = new mongoose.Schema({
 });
 var User = mongoose.model('User', UserSchema);
 module.exports = User;
-

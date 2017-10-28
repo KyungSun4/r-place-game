@@ -7,6 +7,18 @@ var express = require('express');
 var app = express();
 var serv = require('http').Server(app);
 
+var cookieParser = require('cookie-parser');
+var bodyParser = require('body-parser');
+var expressValidator = require('express-validator');
+
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({
+  extended: false
+}));
+app.use(expressValidator()); // Add this after the bodyParser middlewares!
+
+
+
 let users = require('./routes/users');
 app.use('/users', users);
 
@@ -88,8 +100,6 @@ io.sockets.on('connection', function(socket) {
   });
   socket.emit('start', map2);
 });
-
-
 
 
 
