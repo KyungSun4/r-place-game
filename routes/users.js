@@ -20,11 +20,12 @@ router.get('/', function(req, res) {
 
 // Process
 router.post('/', function(req, res) {
-	console.log(req);
-	//console.log(res);
+	//console.log(req);
+	///console.log(res);
   const username = req.body.username;
   const password = req.body.password;
   const password2 = req.body.password2;
+  console.log(username+" "+ password+" "+password2);
 
 
   req.checkBody('username', 'Name is required').notEmpty();
@@ -35,9 +36,7 @@ router.post('/', function(req, res) {
   let errors = req.validationErrors();
 
   if (errors) {
-    res.render('register', {
-      errors: errors
-    });
+    res.sendFile(path.resolve('client/index.html'));
   } else {
     let newUser = new User({
       username: username,
@@ -48,15 +47,18 @@ router.post('/', function(req, res) {
     bcrypt.genSalt(10, function(err, salt) {
       bcrypt.hash(newUser.password, salt, function(err, hash) {
         if (err) {
+          conosle.log("ERROR");
           console.log(err);
         }
         newUser.password = hash;
         newUser.save(function(err) {
           if (err) {
+            conosle.log("ERROR");
             console.log(err);
             return;
           } else {
-            res.redirect('/users/login'); // change the route later
+            console.log("red");
+            res.sendFile(path.resolve('client/index.html')); // change the route later
           }
         });
       });
@@ -66,14 +68,15 @@ router.post('/', function(req, res) {
 });
 // Login Form
 router.get('/login', function(req, res) {
-  res.render('login');
+  res.sendFile(path.resolve('client/login.html'));
 });
+
 
 // Login Process
 router.post('/login', function(req, res, next) {
   passport.authenticate('local', {
-    successRedirect: '/',
-    failureRedirect: '/users/login',
+    successRedirect: '/client/index.html',
+    failureRedirect: '/client/register.html',
     failureFlash: true
   })(req, res, next);
 });

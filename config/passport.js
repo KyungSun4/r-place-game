@@ -12,6 +12,7 @@ module.exports = function(passport){
     User.findOne(query, function(err, user){
       if(err) throw err;
       if(!user){
+        console.log("no user");
         return done(null, false, {message: 'No user found'});
       }
 
@@ -19,8 +20,10 @@ module.exports = function(passport){
       bcrypt.compare(password, user.password, function(err, isMatch){
         if(err) throw err;
         if(isMatch){
+          console.log("login succuesi");
           return done(null, user);
         } else {
+          console.log("wrong pass");
           return done(null, false, {message: 'Wrong password'});
         }
       });
