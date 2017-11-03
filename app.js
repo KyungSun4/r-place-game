@@ -6,11 +6,13 @@ var passport = require('passport');
 var express = require('express');
 var app = express();
 var serv = require('http').Server(app);
-
+var mongoose = require('mongoose');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var expressValidator = require('express-validator');
-
+var config = require('./config/database');
+var session = require('express-session')
+mongoose.connect(config.database);
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
   extended: false
@@ -19,8 +21,6 @@ app.use(expressValidator()); // Add this after the bodyParser middlewares!
 
 
 
-let users = require('./routes/users');
-app.use('/users', users);
 
 app.get('/', function(reg, res) {
   res.sendFile(__dirname + '/client/index.html');
@@ -108,9 +108,20 @@ io.sockets.on('connection', function(socket) {
 
 
 
+app.get('*', function(req, res, next){
+  res.locals.user = req.user || null;
+  next();
+});
+
+
 
 // Passport Config
-require('./config/passport')(passport);
+
 // Passport Middleware
 app.use(passport.initialize());
 app.use(passport.session());
+require('./config/passport')(passport);
+
+
+let users = require('./routes/users');
+app.use('/users', users);
