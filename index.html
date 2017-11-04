@@ -1,0 +1,60 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+	<style>
+    	* { 
+			padding: 0; 
+			margin: 10; 
+		}
+    	canvas { 
+			background: #eee; 
+			display: block; 
+			margin: 0 auto; 
+		}
+    </style>
+</head>
+<body>
+
+<canvas id="myCanvas"></canvas>
+
+<script>
+
+var canvas = document.getElementById("myCanvas");
+var ctx = canvas.getContext("2d");
+
+var gridWidth = document.body.clientWidth = 1000;
+var gridHeight = document.body.clientHeight = 500;
+
+canvas.width = gridWidth;
+canvas.height = gridHeight;
+
+var cellSize = 50;
+var cell = [];
+for (y = 0; y < gridHeight / cellSize; y++) {
+	cell[y] = [];
+	for (x = 0; x < gridWidth / cellSize; x++) {
+		cell[y][x] = {
+			x: x,
+			y: y,
+			player: "None"
+		};
+		ctx.beginPath();
+		ctx.rect(x * cellSize, y * cellSize, cellSize, cellSize);
+		ctx.strokeStyle = "grey";
+		ctx.stroke();
+		ctx.closePath();
+	}
+}
+
+//working on returning data of cell on-click
+//function 
+
+//setInterval(draw, 10);
+
+</script>
+
+</body>
+</html>
