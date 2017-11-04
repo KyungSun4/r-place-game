@@ -108,10 +108,7 @@ io.sockets.on('connection', function(socket) {
 
 
 
-app.get('*', function(req, res, next){
-  res.locals.user = req.user || null;
-  next();
-});
+
 
 
 
