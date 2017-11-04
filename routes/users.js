@@ -15,7 +15,7 @@ var path = require('path');
 
 // Form
 router.get('/', function(req, res) {
-  res.sendFile(path.resolve('client/register.html'));
+  res.sendFile(path.resolve('client/registerFinal.html'));
 });
 
 // Process
@@ -68,7 +68,7 @@ router.post('/', function(req, res) {
 });
 // Login Form
 router.get('/login', function(req, res) {
-  res.sendFile(path.resolve('client/login.html'));
+  res.sendFile(path.resolve('client/loginFinal.html'));
 });
 
 
@@ -76,7 +76,7 @@ router.get('/login', function(req, res) {
 router.post('/login', function(req, res, next) {
   passport.authenticate('local', {
     successRedirect: '/client/index.html',
-    failureRedirect: '/client/register.html',
+    failureRedirect: '/client/registerFinal.html',
     failureFlash: true
   })(req, res, next);
 });
