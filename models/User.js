@@ -13,8 +13,12 @@ var UserSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  password2: {
+  team: {
     type: String,
+    required: true,
+  },
+  time: {
+    type: int,
     required: true,
   }
 });
