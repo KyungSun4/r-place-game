@@ -9,7 +9,7 @@ var mongoose = require('mongoose');
 var bodyParser = require('body-parser');
 var config = require('./config/database');
 var jwt = require('jsonwebtoken')
-
+const bcrypt = require('bcryptjs');
 var User   = require('./models/user')
 var morgan      = require('morgan');
 
@@ -114,9 +114,11 @@ app.get('/register', function(req, res) {
 app.post('/register', function(req, res) {
 
   // create a sample user
+  var hash = bcrypt.hashSync(req.body.password);
+  console.log(hash);
   var newUser = new User({
     username: req.body.username,
-    password: req.body.password,
+    password: hash,
     team: Math.round(Math.random(0,2)),
     time: 0,
   });
@@ -155,7 +157,7 @@ Routes.post('/login', function(req, res) {
     } else if (user) {
 
       // check if password matches
-      if (user.password != req.body.password) {
+      if (!bcrypt.compareSync(req.body.password, user.password)) {
         res.json({ success: false, message: 'Authentication failed. Wrong password.' });
       } else {
 
