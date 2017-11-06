@@ -18,7 +18,7 @@ var UserSchema = new mongoose.Schema({
     required: true,
   },
   time: {
-    type: int,
+    type: Number,
     required: true,
   }
 });
