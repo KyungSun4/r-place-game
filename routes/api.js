@@ -5,14 +5,14 @@ var express = require('express');
 var Routes = express.Router();
 var MongoClient = require('mongodb').MongoClient;
 var url = "mongodb://127.0.0.1:27017/mydb";
+var path = require('path');
 
 Routes.get('/register', function(req, res) {
-  res.sendFile(__dirname + '/client/register.html');
+  res.sendFile(path.resolve('client/registerFinal.html'));
 });
 
 Routes.post('/register', function(req, res) {
 
-  // create a sample user
   var hash = bcrypt.hashSync(req.body.password);
   console.log(hash);
   var newUser = new User({
@@ -21,8 +21,6 @@ Routes.post('/register', function(req, res) {
     team: Math.round(Math.random(0, 2)),
     time: 0,
   });
-
-  // save the sample user
   newUser.save(function(err) {
     if (err) throw err;
 
@@ -34,7 +32,7 @@ Routes.post('/register', function(req, res) {
 });
 
 Routes.get('/login', function(req, res) {
-  res.sendFile(__dirname + '/client/login.html');
+  res.sendFile(path.resolve('client/loginFinal.html'));
 });
 
 Routes.post('/login', function(req, res) {

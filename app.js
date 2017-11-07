@@ -10,6 +10,7 @@ var bodyParser = require('body-parser');
 var config = require('./config/database');
 app.set('superSecret', config.secret);
 
+app.use(express.static('client'))
 
 var morgan = require('morgan');
 
