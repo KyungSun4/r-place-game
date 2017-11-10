@@ -10,11 +10,8 @@ var mongoose = require('mongoose');
 
 
 
-var MongoDB = mongoose.connect(url).connection;
-MongoDB.on('error', function(err) { console.log(err.message); });
-MongoDB.once('open', function() {
-  console.log("mongodb connection open");
-});
+var MongoDB = mongoose.connect(url, { useMongoClient: true }).connection;
+
 
 var bodyParser = require('body-parser');
 var config = require('./config/database');
