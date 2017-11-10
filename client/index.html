@@ -5,11 +5,13 @@
     <meta charset="utf-8" />
     <title></title>
 	<style>
-		html, body { 
-			margin: 0% auto; 
+		html, body {
+			margin: 0% auto;
 		}
     </style>
 	<script src="phaser.js"></script>
+  <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
+  <script src="serverConnection.js"></script>
 </head>
 
 <body>
@@ -76,14 +78,14 @@
 		    }
 	    }
 	    graphics.endFill();
-        
+
         // Cursor marker
         marker = game.add.graphics(0, 0);
         marker.lineStyle(1.25, "#fcfcfc", 1);
         marker.drawRect(0, 0, cellSize, cellSize);
         game.input.addMoveCallback(updateMarker, this);
         game.input.onDown.add(getTileProperties, this);
-        
+
     }
 
     function getTileProperties() {

@@ -7,6 +7,9 @@ var MongoClient = require('mongodb').MongoClient;
 var url = "mongodb://127.0.0.1:27017/mydb";
 var path = require('path');
 
+
+Routes.use('/a', express.static(__dirname + '../client'));
+
 //sends registerFinal.html when connecting to pay /api/routes
 Routes.get('/register', function(req, res) {
   res.sendFile(path.resolve('client/registerFinal.html'));
