@@ -12,8 +12,8 @@ app.set('superSecret', config.secret);
 
 app.use(express.static('client'))
 
+//morgan prints HTTP requests in console
 var morgan = require('morgan');
-
 app.use(morgan('dev'));
 
 mongoose.connect(config.database);
@@ -26,7 +26,7 @@ app.use(bodyParser.urlencoded({
 
 
 
-
+//sends index.html on connection tor root
 app.get('/', function(reg, res) {
   res.sendFile(__dirname + '/client/index.html');
 });
@@ -106,7 +106,7 @@ io.sockets.on('connection', function(socket) {
   socket.emit('start', map2);
 });
 
-
+//gets api.js and sets as routs
 var Routes = require("./routes/api")
-
+//when connectiong to /api/ will willuse api.js
 app.use('/api', Routes);
