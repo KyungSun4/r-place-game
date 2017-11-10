@@ -1,6 +1,6 @@
 
 /*
- side means opposition so it will be a color 
+ side means opposition so it will be a color
  */
 
  // health is defense
@@ -25,13 +25,10 @@ var RedSoldier = {
 	attack: 1;
 }
 
-var attack(Bluesoldier){
-	Bluesoldier.health --;
+var attack = function(soldier){
+	soldier.health --;
 }
 
-var attack(Redsoldier){
-	Redsoldier.health --;
-}
 
 
 var dead(){
@@ -49,4 +46,3 @@ if(All Grid Cells are One Type) // super slang but just temp for now (essentiall
 {
 	Game.done = true;
 }
-

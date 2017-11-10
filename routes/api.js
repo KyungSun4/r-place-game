@@ -7,17 +7,20 @@ var MongoClient = require('mongodb').MongoClient;
 var url = "mongodb://127.0.0.1:27017/mydb";
 var path = require('path');
 
+//sends registerFinal.html when connecting to pay /api/routes
 Routes.get('/register', function(req, res) {
   res.sendFile(path.resolve('client/registerFinal.html'));
 });
 
+//proccesses form submission from register
 Routes.post('/register', function(req, res) {
-
+  //hashes password
   var hash = bcrypt.hashSync(req.body.password);
-  console.log(hash);
+  //creates new user in database
   var newUser = new User({
     username: req.body.username,
     password: hash,
+    //assigns random team 1 or 0
     team: Math.round(Math.random(0, 2)),
     time: 0,
   });
@@ -30,11 +33,12 @@ Routes.post('/register', function(req, res) {
     });
   });
 });
-
+// sends loginFinal.html when connecting to /api/login
 Routes.get('/login', function(req, res) {
   res.sendFile(path.resolve('client/loginFinal.html'));
 });
 
+//procceses login form
 Routes.post('/login', function(req, res) {
   console.log(req.body.username);
   // find the user
@@ -43,43 +47,39 @@ Routes.post('/login', function(req, res) {
   }, function(err, user) {
 
     if (err) throw err;
-
+    //if no user send error response
     if (!user) {
       res.json({
         success: false,
         message: 'Authentication failed. User not found.'
       });
     } else if (user) {
-
-      // check if password matches
+      // if found check if password matches
       if (!bcrypt.compareSync(req.body.password, user.password)) {
+        //if does not mactch send error wrong password
         res.json({
           success: false,
           message: 'Authentication failed. Wrong password.'
         });
       } else {
-
-        // if user is found and password is right
-        // create a token with only our given payload
-        // we don't want to pass in the entire user since that has the password
+        // if user is found and password is right create payload that contains username and team to be encoded
         const payload = {
           username: user.username,
           team: user.team
         };
+        // create jwt (json web token)
         var token = jwt.sign(payload, req.app.get('superSecret'), {
           expiresIn: 14400000 // expires in 24 hours
         });
 
-        // return the information including token as JSON
+        // send token and success message
         res.json({
           success: true,
           message: 'Enjoy your token!',
           token: token
         });
       }
-
     }
-
   });
 });
 
@@ -125,7 +125,7 @@ const util = require('util')
 
 
 
-
+//test post requests
 Routes.post('/team1', function(req, res) {
   console.log(util.inspect(req, {
     showHidden: false,
@@ -213,7 +213,7 @@ Routes.post('/move', function(req, res) {
 
 Routes.get('/', function(req, res) {
   res.json({
-    message: 'Welcome to the coolest API on earth!'
+    message: 'it works!'
   });
 });
 
