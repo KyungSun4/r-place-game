@@ -9,6 +9,7 @@ var mongoose = require('mongoose');
 
 
 
+
 var MongoDB = mongoose.connect(url).connection;
 MongoDB.on('error', function(err) { console.log(err.message); });
 MongoDB.once('open', function() {
@@ -25,7 +26,7 @@ app.use(express.static('client'))
 var morgan = require('morgan');
 app.use(morgan('dev'));
 
-mongoose.connect(config.database);
+mongoose.connect('mongodb://localhost:27017/mydb', { useMongoClient: true });
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
   extended: false
