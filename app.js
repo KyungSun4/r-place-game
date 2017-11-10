@@ -37,7 +37,7 @@ serv.listen(2000);
 var map2;
 
 //if true will create a new map in database
-var reset = false;
+var reset = true;
 
 //connect to database
 MongoClient.connect(url, function(err, db) {
@@ -61,7 +61,15 @@ MongoClient.connect(url, function(err, db) {
       for (var y = 0; y < 10; y++) {
         map[x].push({
           x: x,
-          y: y
+          y: y,
+          walls: {
+            top: null,
+            bottom: null,
+            left: null,
+            right: null
+          },
+          team: null,
+          object: null
         });
       }
     }
