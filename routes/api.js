@@ -17,23 +17,33 @@ Routes.get('/register', function(req, res) {
 
 //proccesses form submission from register
 Routes.post('/register', function(req, res) {
-  //hashes password
-  var hash = bcrypt.hashSync(req.body.password);
-  //creates new user in database
-  var newUser = new User({
-    username: req.body.username,
-    password: hash,
-    //assigns random team 1 or 0
-    team: Math.round(Math.random(0, 2)),
-    time: 0,
-  });
-  newUser.save(function(err) {
-    if (err) throw err;
+  //check if user already exists
+  User.findOne({
+    username: req.body.username
+  }, function(err, user) {
+    if (user) {
+      res.sendFile(path.resolve('client/loginFinal.html'));
+    } else {
+      //hashes password
+      var hash = bcrypt.hashSync(req.body.password);
+      //creates new user in database
+      var newUser = new User({
+        email: req.body.email,
+        username: req.body.username,
+        password: hash,
+        //assigns random team 1 or 0
+        team: Math.round(Math.random(0, 2)),
+        time: 0,
+      });
+      newUser.save(function(err) {
+        if (err) throw err;
 
-    console.log('User saved successfully' + newUser);
-    res.json({
-      success: true
-    });
+        console.log('User saved successfully' + newUser);
+        res.json({
+          success: true
+        });
+      });
+    }
   });
 });
 // sends loginFinal.html when connecting to /api/login
