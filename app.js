@@ -109,26 +109,29 @@ MongoClient.connect(url, function(err, db) {
   */
 });
 
-//gets the full map from database, w and h define height and width of map grid
+//gets the full map from database, w and h define height and width of map grid callback for once map is gotten
 var getFullMap = function(w, h, callback) {
+  //creates map array to store map retreived form database
   var map = [];
+  //fills with empty arrays to make 2d
   for (var y = 0; y < h; y++) {
     map.push([])
     for (var x = 0; x < w; x++) {
+      //fills with null
       map[y].push(null);
     }
   }
+  //connects to databse
   MongoClient.connect(url, function(err, db) {
+    //gets all elements in map collection
     db.collection("map").find({}).toArray(function(err, result) {
       if (err) throw err;
-
+      // for every item retreived add to map aray at correct location
       for (var i = 0; i < result.length; i++) {
         var position = result[i];
-        //console.log(position.x);
         map[position.y][position.x] = position;
       }
-      //map[x].push(result[0]);
-      //console.log(result[0].x + "," + result[0].y);
+      //callback with map
       callback(map);
       db.close();
     });;
@@ -136,10 +139,10 @@ var getFullMap = function(w, h, callback) {
 
 }
 
-
 //on connection get map from database and send to user
 var io = require('socket.io')(serv, {});
 io.sockets.on('connection', function(socket) {
+  //gets full map as array and sends to client
   getFullMap(mapWidth, mapHeight, function(map) {
     console.log(map)
     socket.emit('start', map);
