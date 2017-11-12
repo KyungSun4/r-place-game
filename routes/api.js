@@ -190,14 +190,13 @@ Routes.post('/move', function(req, res) {
 
 
         MongoClient.connect(url, function(err, db) {
+          console.log(user.username);
           if (err) throw err;
           var myquery = {
             username: user.username
           };
-          var newvalues = {
-            time: 5000,
-          };
-          db.collection("User").updateOne(myquery, newvalues, function(err, res) {
+          var newvalues = {  $set: {"time": 5000 } };
+          User.updateOne(myquery, newvalues, function(err, res) {
             if (err) throw err;
             console.log("1 document updated");
             db.close();
