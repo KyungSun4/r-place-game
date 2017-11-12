@@ -7,10 +7,13 @@ var app = express();
 var serv = require('http').Server(app);
 var mongoose = require('mongoose');
 
+var mapWidth = 10;
+var mapHeight = 10;
 
 
-
-var MongoDB = mongoose.connect(url, { useMongoClient: true }).connection;
+var MongoDB = mongoose.connect(url, {
+  useMongoClient: true
+}).connection;
 
 
 var bodyParser = require('body-parser');
@@ -23,7 +26,9 @@ app.use(express.static('client'))
 var morgan = require('morgan');
 app.use(morgan('dev'));
 
-mongoose.connect('mongodb://localhost:27017/mydb', { useMongoClient: true });
+mongoose.connect('mongodb://localhost:27017/mydb', {
+  useMongoClient: true
+});
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
   extended: false
@@ -63,10 +68,10 @@ MongoClient.connect(url, function(err, db) {
     }); 
     //create map array
     var map = [];
-    for (var x = 0; x < 10; x++) {
-      map.push([]);
-      for (var y = 0; y < 10; y++) {
-        map[x].push({
+    for (var x = 0; x < mapWidth; x++) {
+      for (var y = 0; y < mapHeight; y++) {
+        //console.log("(" + x + ", " + y + ")");
+        db.collection("map").insertOne({
           x: x,
           y: y,
           walls: {
@@ -77,21 +82,18 @@ MongoClient.connect(url, function(err, db) {
           },
           team: null,
           object: null
+        }, function(err, res) {
+          if (err) throw err;
+          db.close();
         });
       }
     }
-    //puts map array in database
-    db.collection("map").insertOne({
-      num: 0,
-      m: map
-    }, function(err, res) {
-      if (err) throw err;
-      console.log("1 document inserted");
-      db.close();
-    });
   }
 
+
   //gets map form database and stores in map2
+
+  /*
   db.collection("map").find({
     num: 0
   }).toArray(function(err, result) {
@@ -104,10 +106,49 @@ MongoClient.connect(url, function(err, db) {
 
     db.close();
   });
+  */
 });
+
+//gets the full map from database, w and h define height and width of map grid callback for once map is gotten
+var getFullMap = function(w, h, callback) {
+  //creates map array to store map retreived form database
+  var map = [];
+  //fills with empty arrays to make 2d
+  for (var y = 0; y < h; y++) {
+    map.push([])
+    for (var x = 0; x < w; x++) {
+      //fills with null
+      map[y].push(null);
+    }
+  }
+  //connects to databse
+  MongoClient.connect(url, function(err, db) {
+    //gets all elements in map collection
+    db.collection("map").find({}).toArray(function(err, result) {
+      if (err) throw err;
+      // for every item retreived add to map aray at correct location
+      for (var i = 0; i < result.length; i++) {
+        var position = result[i];
+        map[position.y][position.x] = position;
+      }
+      //callback with map
+      callback(map);
+      db.close();
+    });;
+  });
+
+}
 
 //on connection get map from database and send to user
 var io = require('socket.io')(serv, {});
+io.sockets.on('connection', function(socket) {
+  //gets full map as array and sends to client
+  getFullMap(mapWidth, mapHeight, function(map) {
+    console.log(map)
+    socket.emit('start', map);
+  });
+});
+/*
 io.sockets.on('connection', function(socket) {
   MongoClient.connect(url, function(err, db) {
     db.collection("map").find({
@@ -120,6 +161,7 @@ io.sockets.on('connection', function(socket) {
   });
   socket.emit('start', map2);
 });
+*/
 
 //gets api.js and sets as routs
 var Routes = require("./routes/api")
