@@ -89,24 +89,6 @@ MongoClient.connect(url, function(err, db) {
       }
     }
   }
-
-
-  //gets map form database and stores in map2
-
-  /*
-  db.collection("map").find({
-    num: 0
-  }).toArray(function(err, result) {
-    if (err) throw err;
-    map2 = result[0].m;
-    for (x in result[0].m) {
-      for (y in result[0].m[x])
-        console.log(result[0].m[x][y]);
-    }
-
-    db.close();
-  });
-  */
 });
 
 //gets the full map from database, w and h define height and width of map grid callback for once map is gotten
@@ -148,20 +130,7 @@ io.sockets.on('connection', function(socket) {
     socket.emit('start', map);
   });
 });
-/*
-io.sockets.on('connection', function(socket) {
-  MongoClient.connect(url, function(err, db) {
-    db.collection("map").find({
-      num: 0
-    }).toArray(function(err, result) {
-      if (err) throw err;
-      map2 = result[0].m;
-      db.close();
-    });
-  });
-  socket.emit('start', map2);
-});
-*/
+
 
 //gets api.js and sets as routs
 var Routes = require("./routes/api")
