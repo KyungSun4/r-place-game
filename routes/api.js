@@ -15,6 +15,27 @@ Routes.get('/register', function(req, res) {
   res.sendFile(path.resolve('client/registerFinal.html'));
 });
 
+Routes.post('/resetTime', function(req, res) {
+  MongoClient.connect(url, function(err, db) {
+    if (err) throw err;
+    var myquery = {
+      email: req.body.email
+    };
+    var newvalues = {
+      $set: {
+        "time": 0
+      }
+    };
+    User.updateOne(myquery, newvalues, function(err, res) {
+      if (err) throw err;
+      console.log("time reset");
+      db.close();
+    });
+  });
+  res.json({
+    success: true
+  });
+});
 //proccesses form submission from register
 Routes.post('/register', function(req, res) {
   //check if user already exists
@@ -195,48 +216,56 @@ Routes.post('/move', function(req, res) {
       });
     } else if (user) {
       //if user found check if has time to make turn
-      if (user.time == 5000) {
+      if (user.time == 0) {
+
+        function requestResultCb(success) {
+          if (success) {
+            //set users time to 5000
+            MongoClient.connect(url, function(err, db) {
+              console.log(user.username);
+              if (err) throw err;
+              var myquery = {
+                email: user.email
+              };
+              var newvalues = {
+                $set: {
+                  "time": 5000
+                }
+              };
+              User.updateOne(myquery, newvalues, function(err, res) {
+                if (err) throw err;
+                console.log("time reset");
+                db.close();
+              });
+            });
+            res.json({
+              success: success,
+              message: 'Move made.'
+            });
+          } else {
+            res.json({
+              success: success,
+              message: "no se"
+            });
+          }
+        }
 
         moveType = req.body.moveType;
 
         //place soldier on map at given location
         if (moveType == "placeSoldier") {
-          var soldier = {xDir:1,yDir:0};//new Soldier();
-          //TODO make sure location is valid for players team
-          databaseFunctions.legalPlaceSoldier(req.body.x,req.body.y,soldier,function(dres) {
-            console.log("place soldier at:" +req.body.x+", "+req.body.y+" "+ dres);
-            success=dres;
-
-            if (success) {
-              //set users time to 5000
-              MongoClient.connect(url, function(err, db) {
-                console.log(user.username);
-                if (err) throw err;
-                var myquery = {
-                  username: user.username
-                };
-                var newvalues = {
-                  $set: {
-                    "time": 5000
-                  }
-                };
-                User.updateOne(myquery, newvalues, function(err, res) {
-                  if (err) throw err;
-                  console.log("time reset");
-                  db.close();
-                });
-              });
-              res.json({
-                success: success,
-                message: 'Move made.'
-              });
-            } else {
-              res.json({
-                success: success,
-                message: "no se"
-              });
-            }
-          });
+          var soldier = {
+            xDir: 1,
+            yDir: 0
+          }; //new Soldier();
+          if (databaseFunctions.getTeamAtLocation(x, y) == user.team) {
+            databaseFunctions.legalPlaceSoldier(req.body.x, req.body.y, soldier, function(dres) {
+              console.log("place soldier at:" + req.body.x + ", " + req.body.y + " " + dres);
+              requestResultCb(dres);
+            });
+          } else {
+            requestResultCb(false);
+          }
         }
         //change soldier dirrection
 

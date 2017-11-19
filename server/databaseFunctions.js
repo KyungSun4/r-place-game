@@ -9,13 +9,6 @@ var functions = {
     MongoClient.connect(url, function(err, db) {
       if (err) throw err;
       console.log(x + " "+ y);
-
-      db.collection("map").find({x:x,y:y}).toArray(function(err, result) {
-        if (err) throw err;
-        for (var i = 0; i < result.length; i++) {
-          console.log(result[i]);
-        }
-      });;
       var query = {}
       query['x'] = Number(x);
       query['y'] = Number(y);
@@ -116,6 +109,16 @@ var functions = {
   // decerments all player times
   updatePlayerTimes: function() {
 
+  },
+  getTeamAtLocation: function(x,y,callback) {
+    MongoClient.connect(url, function(err, db) {
+      if (err) throw err;
+      db.collection("map").findOne(query,{team:1}, function(err, res) {
+        if (err) throw err;
+        callback(res);
+        db.close();
+      });
+    });
   }
 }
 
