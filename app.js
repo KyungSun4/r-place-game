@@ -65,7 +65,6 @@ MongoClient.connect(url, function(err, db) {
     db.createCollection("map", function(err, res) {
       if (err) throw err;
       console.log("Collection created!");
-      db.close();
     }); 
 
 
@@ -88,7 +87,9 @@ MongoClient.connect(url, function(err, db) {
         });
       }
     }
-    db.collection("map").insert(newMap);
+    db.collection("map").insert(newMap,function(err, res) {
+      db.close();
+    });
   }
 });
 
@@ -132,6 +133,8 @@ io.sockets.on('connection', function(socket) {
   });
 });
 
+
+//TODO: start game logic loop
 
 //gets api.js and sets as routs
 var Routes = require("./routes/api")

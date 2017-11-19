@@ -27,7 +27,7 @@ var UserSchema = new mongoose.Schema({
   }
 });
 var User = mongoose.model('User', UserSchema);
-var resetUsers = true;
+var resetUsers = false;
 if (resetUsers) {
   //delete old maps
   User.remove({}, function(err) {
