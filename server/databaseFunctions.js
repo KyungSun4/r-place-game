@@ -2,13 +2,13 @@ var url = "mongodb://localhost:27017/mydb";
 var MongoClient = require('mongodb').MongoClient;
 var functions = {
   //adds soldier to map at defined position does not check if allowed
-  placeSoldier: function(x, y, soldier,callback) {
+  placeSoldier: function(x, y, soldier, callback) {
     var placeX = x;
-    var placeY= y;
-    console.log(x + " "+ y);
+    var placeY = y;
+    console.log(x + " " + y);
     MongoClient.connect(url, function(err, db) {
       if (err) throw err;
-      console.log(x + " "+ y);
+      console.log(x + " " + y);
       var query = {}
       query['x'] = Number(x);
       query['y'] = Number(y);
@@ -17,10 +17,12 @@ var functions = {
         $set: {
           "object": soldier
         }
-      },{multi: true}, function(err, res) {
+      }, {
+        multi: true
+      }, function(err, res) {
         if (err) throw err;
         callback(true);
-        console.log(x + " "+ y);
+        console.log(x + " " + y);
         db.close();
       });
     });
@@ -29,12 +31,12 @@ var functions = {
   legalPlaceSoldier: function(x, y, soldier, callback) {
     functions.getObjectAtPosition(x, y, function(res) {
       if (res == null) {
-        functions.placeSoldier(x, y, soldier,function(s) {
-          if(s) {
-          callback(true);
-        } else {
-          callback(false);
-        }
+        functions.placeSoldier(x, y, soldier, function(s) {
+          if (s) {
+            callback(true);
+          } else {
+            callback(false);
+          }
         });
       } else {
         callback(false);
@@ -110,12 +112,17 @@ var functions = {
   updatePlayerTimes: function() {
 
   },
-  getTeamAtLocation: function(x,y,callback) {
+  getTeamAtLocation: function(x, y, callback) {
     MongoClient.connect(url, function(err, db) {
       if (err) throw err;
-      db.collection("map").findOne(query,{team:1}, function(err, res) {
+      var query = {}
+      query['x'] = Number(x);
+      query['y'] = Number(y);
+      db.collection("map").findOne(query, {
+        team: 1
+      }, function(err, res) {
         if (err) throw err;
-        callback(res);
+        callback(res.team);
         db.close();
       });
     });

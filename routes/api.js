@@ -218,7 +218,8 @@ Routes.post('/move', function(req, res) {
       //if user found check if has time to make turn
       if (user.time == 0) {
 
-        function requestResultCb(success) {
+        function requestResultCb(success,msg) {
+          //if move was succeful
           if (success) {
             //set users time to 5000
             MongoClient.connect(url, function(err, db) {
@@ -238,14 +239,15 @@ Routes.post('/move', function(req, res) {
                 db.close();
               });
             });
+            //return result
             res.json({
               success: success,
-              message: 'Move made.'
+              message: msg
             });
           } else {
             res.json({
               success: success,
-              message: "no se"
+              message: msg
             });
           }
         }
@@ -258,14 +260,17 @@ Routes.post('/move', function(req, res) {
             xDir: 1,
             yDir: 0
           }; //new Soldier();
-          if (databaseFunctions.getTeamAtLocation(x, y) == user.team) {
-            databaseFunctions.legalPlaceSoldier(req.body.x, req.body.y, soldier, function(dres) {
-              console.log("place soldier at:" + req.body.x + ", " + req.body.y + " " + dres);
-              requestResultCb(dres);
-            });
-          } else {
-            requestResultCb(false);
-          }
+          //check if team is correct
+          databaseFunctions.getTeamAtLocation(req.body.x, req.body.y,function(locationTeam) {
+            if (locationTeam == user.team) {
+              databaseFunctions.legalPlaceSoldier(req.body.x, req.body.y, soldier, function(dres) {
+                console.log("place soldier at:" + req.body.x + ", " + req.body.y + " " + dres);
+                requestResultCb(dres,"soldier placed at:"+ req.body.x + ", "+ req.body.y);
+              });
+            } else {
+              requestResultCb(false,"inccorect team, Your team: "+ user.team+" location" + req.body.x + ", "+req.body.y+" team: "+ locationTeam);
+            }
+          });
         }
         //change soldier dirrection
 
