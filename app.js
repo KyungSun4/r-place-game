@@ -67,12 +67,14 @@ MongoClient.connect(url, function(err, db) {
       console.log("Collection created!");
       db.close();
     }); 
-    //create map array
-    var map = [];
+
+
+    var newMap =[]
+
     for (var x = 0; x < mapWidth; x++) {
       for (var y = 0; y < mapHeight; y++) {
         //console.log("(" + x + ", " + y + ")");
-        db.collection("map").insertOne({
+        newMap.push({
           x: x,
           y: y,
           walls: {
@@ -83,12 +85,10 @@ MongoClient.connect(url, function(err, db) {
           },
           team: null,
           object: null
-        }, function(err, res) {
-          if (err) throw err;
-          db.close();
         });
       }
     }
+    db.collection("map").insert(newMap);
   }
 });
 

@@ -6,7 +6,7 @@ var Routes = express.Router();
 var MongoClient = require('mongodb').MongoClient;
 var url = "mongodb://127.0.0.1:27017/mydb";
 var path = require('path');
-
+var databaseFunctions = require("../server/databaseFunctions");
 
 Routes.use('/a', express.static(__dirname + '../client'));
 
