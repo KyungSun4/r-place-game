@@ -52,14 +52,14 @@ var legalMoveSoldier = function(x, y, callback) {
   });
 }
 //changes soldier dirrection
-var changeSoldierDir() = function(x, y, xDir, yDir) {
+var changeSoldierDir = function(x, y, xDir, yDir) {
   db.collection("map").updateOne({
     x: x,
     y: y
-  }, $set: {
-    object.xDir: xDir,
-    object.yDir: yDir
-  }, function(err, res) {
+  }, {$set: {
+    "object.xDir": xDir,
+    "object.yDir": yDir
+  }}, function(err, res) {
     if (err) throw err;
   });
 }
@@ -73,4 +73,8 @@ var removeObject = function(x, y) {
   }, function(err, res) {
     if (err) throw err;
   });
+}
+// decerments all player times
+var updatePlayerTimes = function() {
+
 }

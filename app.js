@@ -6,7 +6,7 @@ var express = require('express');
 var app = express();
 var serv = require('http').Server(app);
 var mongoose = require('mongoose');
-
+//var User = require('./models/User')
 var mapWidth = 10;
 var mapHeight = 10;
 
@@ -49,13 +49,14 @@ serv.listen(2000);
 var map2;
 
 //if true will create a new map in database
-var reset = true;
+var resetMap = true;
 
 //connect to database
 MongoClient.connect(url, function(err, db) {
   if (err) throw err;
   //restarts whole game incliding database
-  if (reset) {
+
+  if (resetMap) {
     //delete old maps
     db.collection('map', function(err, collection) {
       collection.remove({}, function(err, removed) {});
@@ -66,12 +67,14 @@ MongoClient.connect(url, function(err, db) {
       console.log("Collection created!");
       db.close();
     }); 
-    //create map array
-    var map = [];
+
+
+    var newMap =[]
+
     for (var x = 0; x < mapWidth; x++) {
       for (var y = 0; y < mapHeight; y++) {
         //console.log("(" + x + ", " + y + ")");
-        db.collection("map").insertOne({
+        newMap.push({
           x: x,
           y: y,
           walls: {
@@ -82,12 +85,10 @@ MongoClient.connect(url, function(err, db) {
           },
           team: null,
           object: null
-        }, function(err, res) {
-          if (err) throw err;
-          db.close();
         });
       }
     }
+    db.collection("map").insert(newMap);
   }
 });
 

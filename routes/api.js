@@ -1,12 +1,12 @@
-var jwt = require('jsonwebtoken')
+var jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
-var User = require('../models/user')
+var User = require('../models/user');
 var express = require('express');
 var Routes = express.Router();
 var MongoClient = require('mongodb').MongoClient;
 var url = "mongodb://127.0.0.1:27017/mydb";
 var path = require('path');
-
+var databaseFunctions = require("../server/databaseFunctions");
 
 Routes.use('/a', express.static(__dirname + '../client'));
 
@@ -18,33 +18,42 @@ Routes.get('/register', function(req, res) {
 //proccesses form submission from register
 Routes.post('/register', function(req, res) {
   //check if user already exists
-  User.findOne({
-    username: req.body.username
-  }, function(err, user) {
-    if (user) {
-      res.sendFile(path.resolve('client/loginFinal.html'));
-    } else {
-      //hashes password
-      var hash = bcrypt.hashSync(req.body.password);
-      //creates new user in database
-      var newUser = new User({
-        email: req.body.email,
-        username: req.body.username,
-        password: hash,
-        //assigns random team 1 or 0
-        team: Math.round(Math.random(0, 2)),
-        time: 0,
-      });
-      newUser.save(function(err) {
-        if (err) throw err;
-
-        console.log('User saved successfully' + newUser);
-        res.json({
-          success: true
+  if (req.body.email != null && req.body.username != null) {
+    User.findOne({
+      email: req.body.email
+    }, function(err, user) {
+      if (user) {
+        //TODO should make page stating that account already exists
+        res.sendFile(path.resolve('client/loginFinal.html'));
+      } else {
+        //TODO make sure username us unique
+        //hashes password
+        var hash = bcrypt.hashSync(req.body.password);
+        //creates new user in database
+        var newUser = new User({
+          email: req.body.email,
+          username: req.body.username,
+          password: hash,
+          //assigns random team 1 or 0
+          team: Math.round(Math.random(0, 2)),
+          time: 0,
         });
-      });
-    }
-  });
+        newUser.save(function(err) {
+          if (err) throw err;
+
+          console.log('User saved successfully' + newUser);
+          res.json({
+            success: true
+          });
+        });
+      }
+    });
+  } else {
+    res.json({
+      success: false,
+      message: "data missing",
+    })
+  }
 });
 // sends loginFinal.html when connecting to /api/login
 Routes.get('/login', function(req, res) {
@@ -53,10 +62,10 @@ Routes.get('/login', function(req, res) {
 
 //procceses login form
 Routes.post('/login', function(req, res) {
-  console.log(req.body.username);
+  console.log(req.body.email);
   // find the user
   User.findOne({
-    username: req.body.username
+    email: req.body.email
   }, function(err, user) {
 
     if (err) throw err;
@@ -77,6 +86,7 @@ Routes.post('/login', function(req, res) {
       } else {
         // if user is found and password is right create payload that contains username and team to be encoded
         const payload = {
+          email: user.email,
           username: user.username,
           team: user.team
         };
@@ -171,42 +181,54 @@ Routes.post('/team0', function(req, res) {
 });
 
 Routes.post('/move', function(req, res) {
-
+  //find user in database
   User.findOne({
-    username: req.decoded.username
+    email: req.decoded.email
   }, function(err, user) {
 
     if (err) throw err;
-
+    //if no user found, fail
     if (!user) {
       res.json({
         success: false,
         message: 'Authentication failed. User not found.'
       });
     } else if (user) {
+      //if user found check if has time to make turn
       if (user.time == 0) {
-        user.time = 5000;
+        success = false;
 
+        moveType = req.body.moveType;
 
+        //place soldier on map at given location
+        if (moveType == "placeSoldier") {
+          console.log("move Soldier");
+          success = true;
+        }
+        //change soldier dirrection
 
-        MongoClient.connect(url, function(err, db) {
-          console.log(user.username);
-          if (err) throw err;
-          var myquery = {
-            username: user.username
-          };
-          var newvalues = {  $set: {"time": 5000 } };
-          User.updateOne(myquery, newvalues, function(err, res) {
+        //place wall
+
+        if (success) {
+          //set users time to 5000
+          MongoClient.connect(url, function(err, db) {
+            console.log(user.username);
             if (err) throw err;
-            console.log("1 document updated");
-            db.close();
+            var myquery = {
+              username: user.username
+            };
+            var newvalues = {
+              $set: {
+                "time": 5000
+              }
+            };
+            User.updateOne(myquery, newvalues, function(err, res) {
+              if (err) throw err;
+              console.log("time reset");
+              db.close();
+            });
           });
-        });
-
-
-        //TODO: modify map
-
-
+        }
         res.json({
           success: true,
           message: 'Move made.'
@@ -228,6 +250,7 @@ Routes.get('/', function(req, res) {
     message: 'it works!'
   });
 });
+
 
 
 ///remove this latter
