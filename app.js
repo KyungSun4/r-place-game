@@ -6,7 +6,7 @@ var express = require('express');
 var app = express();
 var serv = require('http').Server(app);
 var mongoose = require('mongoose');
-
+//var User = require('./models/User')
 var mapWidth = 10;
 var mapHeight = 10;
 
@@ -49,13 +49,14 @@ serv.listen(2000);
 var map2;
 
 //if true will create a new map in database
-var reset = true;
+var resetMap = true;
 
 //connect to database
 MongoClient.connect(url, function(err, db) {
   if (err) throw err;
   //restarts whole game incliding database
-  if (reset) {
+
+  if (resetMap) {
     //delete old maps
     db.collection('map', function(err, collection) {
       collection.remove({}, function(err, removed) {});

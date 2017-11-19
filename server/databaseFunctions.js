@@ -74,3 +74,7 @@ var removeObject = function(x, y) {
     if (err) throw err;
   });
 }
+// decerments all player times
+var updatePlayerTimes = function() {
+  
+}

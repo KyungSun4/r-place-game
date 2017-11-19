@@ -3,13 +3,12 @@ var mongoose = require('mongoose');
 mongoose.Promise = require('bluebird');
 //assert.equal(query.exec().constructor, require('bluebird'));
 var UserSchema = new mongoose.Schema({
-  username: {
+  email: {
     type: String,
     unique: true,
     required: true,
-    trim: true
   },
-  email: {
+  username: {
     type: String,
     required: true,
     trim: true
@@ -28,4 +27,12 @@ var UserSchema = new mongoose.Schema({
   }
 });
 var User = mongoose.model('User', UserSchema);
+var resetUsers = true;
+if (resetUsers) {
+  //delete old maps
+  User.remove({}, function(err) {
+    if (err) throw err;
+    // removed!
+  });
+}
 module.exports = User;
