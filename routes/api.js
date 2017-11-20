@@ -8,6 +8,9 @@ var url = "mongodb://127.0.0.1:27017/mydb";
 var path = require('path');
 var databaseFunctions = require("../server/databaseFunctions");
 
+
+var mapWidth = 10;
+var mapHeight = 10;
 Routes.use('/a', express.static(__dirname + '../client'));
 
 //sends registerFinal.html when connecting to pay /api/routes
@@ -276,7 +279,7 @@ Routes.post('/move', function(req, res) {
         //change soldier Destination
         if (moveType == "changeSoldierDestination") {
           //make sure destination is allowed
-          if (req.body.x == req.body.xDest || req.body.y == req.body.yDest) {
+          if ((req.body.x == req.body.xDest || req.body.y == req.body.yDest) && req.body.yDest > 0 && req.body.yDest < mapHeight && req.body.xDest > 0 && req.body.xDest < mapWidth) {
             //check if team is correct
             databaseFunctions.getSoldierTeam(req.body.x, req.body.y, function(soldierTeam) {
               if (soldier == user.team) {

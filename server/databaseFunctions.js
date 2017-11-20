@@ -1,5 +1,6 @@
 var url = "mongodb://localhost:27017/mydb";
 var MongoClient = require('mongodb').MongoClient;
+var User = require('../models/user');
 var functions = {
   //adds soldier to map at defined position does not check if allowed
   placeSoldier: function(x, y, soldier, callback) {
@@ -112,7 +113,14 @@ var functions = {
   },
   // decerments all player times
   updatePlayerTimes: function() {
-
+    MongoClient.connect(url, function(err, db) {
+      if (err) throw err;
+      User.update({}, {
+        $inc: {
+          "time": -1
+        }
+      });
+    });
   },
   getTeamAtLocation: function(x, y, callback) {
     MongoClient.connect(url, function(err, db) {
@@ -152,7 +160,7 @@ var functions = {
       });
     });
   },
-  changeSoldierDestination: function(x,y,xDest,yDest,callback) {
+  changeSoldierDestination: function(x, y, xDest, yDest, callback) {
     MongoClient.connect(url, function(err, db) {
       if (err) throw err;
       var query = {}
@@ -166,7 +174,7 @@ var functions = {
       }, function(err, res) {
         if (err) throw err;
         console.log(res);
-        callback(true,"worked");
+        callback(true, "worked");
       });
     });
   }
