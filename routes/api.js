@@ -218,7 +218,7 @@ Routes.post('/move', function(req, res) {
       //if user found check if has time to make turn
       if (user.time == 0) {
 
-        function requestResultCb(success,msg) {
+        function requestResultCb(success, msg) {
           //if move was succeful
           if (success) {
             //set users time to 5000
@@ -261,20 +261,37 @@ Routes.post('/move', function(req, res) {
             yDir: 0
           }; //new Soldier();
           //check if team is correct
-          databaseFunctions.getTeamAtLocation(req.body.x, req.body.y,function(locationTeam) {
+          databaseFunctions.getTeamAtLocation(req.body.x, req.body.y, function(locationTeam) {
             if (locationTeam == user.team) {
+              //try to place soldier
               databaseFunctions.legalPlaceSoldier(req.body.x, req.body.y, soldier, function(dres) {
                 console.log("place soldier at:" + req.body.x + ", " + req.body.y + " " + dres);
-                requestResultCb(dres,"soldier placed at:"+ req.body.x + ", "+ req.body.y);
+                requestResultCb(dres, "soldier placed at:" + req.body.x + ", " + req.body.y);
               });
             } else {
-              requestResultCb(false,"inccorect team, Your team: "+ user.team+" location" + req.body.x + ", "+req.body.y+" team: "+ locationTeam);
+              requestResultCb(false, "inccorect team, Your team: " + user.team + " location" + req.body.x + ", " + req.body.y + " team: " + locationTeam);
             }
           });
         }
-        //change soldier dirrection
-
-        //place wall
+        //change soldier Destination
+        if (moveType == "changeSoldierDestination") {
+          //make sure destination is allowed
+          if (req.body.x == req.body.xDest || req.body.y == req.body.yDest) {
+            //check if team is correct
+            databaseFunctions.getSoldierTeam(req.body.x, req.body.y, function(soldierTeam) {
+              if (soldier == user.team) {
+                //try to change soldier destination
+                databaseFunctions.changeSoldierDestination(req.body.x, req.body.y, req.body.xDest, req.body.yDest, function(dres, msg) {
+                  console.log("change soldier at:" + req.body.x + ", " + req.body.y + " destination" + dres);
+                  requestResultCb(dres, ":" + req.body.x + ", " + req.body.y);
+                });
+              } else {
+                requestResultCb(false, "inccorect team, Your team: " + user.team + " location" + req.body.x + ", " + req.body.y + " team: " + soldierTeam);
+              }
+            });
+          }
+        }
+        //TODO place wall
 
 
       } else {
