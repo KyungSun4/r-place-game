@@ -134,8 +134,11 @@ io.sockets.on('connection', function(socket) {
 });
 
 
-//TODO: start game logic loop
-
+//game logic loop
+var gameLoop = require("./server/gameLoop");
+setInterval(function() {
+  gameLoop();
+}, 1000 / 1); //updates 1 times a second 1Hz
 //gets api.js and sets as routs
 var Routes = require("./routes/api")
 //when connectiong to /api/ will willuse api.js

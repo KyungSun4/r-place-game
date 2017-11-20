@@ -1,21 +1,13 @@
 var url = "mongodb://localhost:27017/mydb";
 var MongoClient = require('mongodb').MongoClient;
+var User = require('../models/user');
 var functions = {
   //adds soldier to map at defined position does not check if allowed
-  placeSoldier: function(x, y, soldier,callback) {
-    var placeX = x;
-    var placeY= y;
-    console.log(x + " "+ y);
+  placeSoldier: function(x, y, soldier, callback) {
+    console.log(x + " " + y);
     MongoClient.connect(url, function(err, db) {
       if (err) throw err;
-      console.log(x + " "+ y);
-
-      db.collection("map").find({x:x,y:y}).toArray(function(err, result) {
-        if (err) throw err;
-        for (var i = 0; i < result.length; i++) {
-          console.log(result[i]);
-        }
-      });;
+      console.log(x + " " + y);
       var query = {}
       query['x'] = Number(x);
       query['y'] = Number(y);
@@ -24,10 +16,12 @@ var functions = {
         $set: {
           "object": soldier
         }
-      },{multi: true}, function(err, res) {
+      }, {
+        multi: true
+      }, function(err, res) {
         if (err) throw err;
         callback(true);
-        console.log(x + " "+ y);
+        console.log(x + " " + y);
         db.close();
       });
     });
@@ -36,12 +30,12 @@ var functions = {
   legalPlaceSoldier: function(x, y, soldier, callback) {
     functions.getObjectAtPosition(x, y, function(res) {
       if (res == null) {
-        functions.placeSoldier(x, y, soldier,function(s) {
-          if(s) {
-          callback(true);
-        } else {
-          callback(false);
-        }
+        functions.placeSoldier(x, y, soldier, function(s) {
+          if (s) {
+            callback(true);
+          } else {
+            callback(false);
+          }
         });
       } else {
         callback(false);
@@ -82,23 +76,27 @@ var functions = {
       });
     });
   },
+  // change soldierDir unesesary
+  /*
   //changes soldier dirrection
-  changeSoldierDir: function(x, y, xDir, yDir) {
+  changeSoldierDir: function(x, y, xDir, yDir, callback) {
     MongoClient.connect(url, function(err, db) {
       if (err) throw err;
-      db.collection("map").updateOne({
-        x: x,
-        y: y
-      }, {
+      var query = {}
+      query['x'] = Number(x);
+      query['y'] = Number(y);
+      db.collection("map").updateOne(query, {
         $set: {
-          "object.xDir": xDir,
-          "object.yDir": yDir
+          "object.xDir": Number(xDir),
+          "object.yDir": Number(yDir)
         }
       }, function(err, res) {
         if (err) throw err;
+        callback(true);
       });
     });
   },
+  */
   //clears location
   removeObject: function(x, y) {
     MongoClient.connect(url, function(err, db) {
@@ -115,7 +113,70 @@ var functions = {
   },
   // decerments all player times
   updatePlayerTimes: function() {
-
+    MongoClient.connect(url, function(err, db) {
+      if (err) throw err;
+      User.update({}, {
+        $inc: {
+          "time": -1
+        }
+      });
+    });
+  },
+  getTeamAtLocation: function(x, y, callback) {
+    MongoClient.connect(url, function(err, db) {
+      if (err) throw err;
+      var query = {}
+      query['x'] = Number(x);
+      query['y'] = Number(y);
+      db.collection("map").findOne(query, {
+        team: 1
+      }, function(err, res) {
+        if (err) throw err;
+        callback(res.team);
+        db.close();
+      });
+    });
+  },
+  getSoldierTeam: function(x, y, callback) {
+    MongoClient.connect(url, function(err, db) {
+      if (err) throw err;
+      var query = {}
+      query['x'] = Number(x);
+      query['y'] = Number(y);
+      db.collection("map").findOne(query, {
+        object: 1
+      }, function(err, res) {
+        if (err) throw err;
+        if (res.object != null) {
+          if (res.object.type == "soldier") {
+            callback(res.object.team);
+          } else {
+            callback(null);
+          }
+        } else {
+          callback(null);
+        }
+        db.close();
+      });
+    });
+  },
+  changeSoldierDestination: function(x, y, xDest, yDest, callback) {
+    MongoClient.connect(url, function(err, db) {
+      if (err) throw err;
+      var query = {}
+      query['x'] = Number(x);
+      query['y'] = Number(y);
+      db.collection("map").updateOne(query, {
+        $set: {
+          "object.xDest": Number(xDest),
+          "object.yDest": Number(yDest)
+        }
+      }, function(err, res) {
+        if (err) throw err;
+        console.log(res);
+        callback(true, "worked");
+      });
+    });
   }
 }
 
