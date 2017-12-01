@@ -115,10 +115,15 @@ var functions = {
   updatePlayerTimes: function() {
     MongoClient.connect(url, function(err, db) {
       if (err) throw err;
-      User.update({}, {
+      var query = {};
+      var newvalues = {
         $inc: {
           "time": -1
         }
+      }
+      User.update(query, newvalues, function(err, res) {
+        if (err) throw err;
+        db.close();
       });
     });
   },
