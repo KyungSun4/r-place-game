@@ -5,13 +5,11 @@
     <meta charset="utf-8" />
     <title></title>
 	<style>
-		html, body {
-			margin: 0% auto;
+		html, body { 
+			margin: 0% auto; 
 		}
     </style>
 	<script src="phaser.js"></script>
-  <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
-  <script src="serverConnection.js"></script>
 </head>
 
 <body>
@@ -73,19 +71,25 @@
                 grid[y][x] = {
                     x: x,
                     y: y,
-                    color: color
+                    color: color,
+                    walls: {
+                        top: false,
+                        right: false,
+                        bottom: false,
+                        left: false
+                    }
                 };
 		    }
 	    }
 	    graphics.endFill();
-
+        
         // Cursor marker
         marker = game.add.graphics(0, 0);
         marker.lineStyle(1.25, "#fcfcfc", 1);
         marker.drawRect(0, 0, cellSize, cellSize);
         game.input.addMoveCallback(updateMarker, this);
         game.input.onDown.add(getTileProperties, this);
-
+        
     }
 
     function getTileProperties() {
@@ -97,10 +101,37 @@
             for (x = 0; x < gameWidth / cellSize; x++) {
                 if (grid[y][x].x == clickX && grid[y][x].y == clickY) {
                     console.log(grid[y][x]);
+
+                    //Fill cell color
                     var randomColor = Phaser.Color.getRandomColor()
                     graphics.beginFill(randomColor, 1);
+                    graphics.lineStyle(0.25, "#fcfcfc", 1);
                     graphics.drawRect((x + 1) * cellSize, (y + 1) * cellSize, cellSize, cellSize);
                     grid[y][x].color = randomColor;
+
+                    //Draw cell walls
+                    graphics.lineStyle(3, "#fcfcfc", 1);
+
+                    //Draw top wall
+                    graphics.moveTo(x * cellSize + 2 * cellSize, y * cellSize + cellSize);
+                    graphics.lineTo(x * cellSize + cellSize, y * cellSize + cellSize);
+                    grid[y][x].walls.top = true;
+                    
+                    //Draw right wall
+                    graphics.moveTo(x * cellSize + 2 * cellSize, y * cellSize + 2 * cellSize);
+                    graphics.lineTo(x * cellSize + 2 * cellSize, y * cellSize + cellSize);
+                    grid[y][x].walls.right = true;
+
+                    //Draw bottom wall
+                    graphics.moveTo(x * cellSize + 2 * cellSize, y * cellSize + 2 * cellSize);
+                    graphics.lineTo(x * cellSize + cellSize, y * cellSize + 2 * cellSize);
+                    grid[y][x].walls.bottom = true;
+
+                    //Draw left wall
+                    graphics.moveTo(x * cellSize + cellSize, y * cellSize + 2 * cellSize);
+                    graphics.lineTo(x * cellSize + cellSize, y * cellSize + cellSize);
+                    grid[y][x].walls.left = true;
+                    
                     console.log(grid[y][x]);
                     break;
                 }
