@@ -17,7 +17,9 @@ Routes.use('/a', express.static(__dirname + '../client'));
 Routes.get('/register', function(req, res) {
   res.sendFile(path.resolve('client/registerFinal.html'));
 });
-
+Routes.get('/main.css', function(req, res) {
+  res.sendFile(path.resolve('client/main.css'));
+});
 Routes.post('/resetTime', function(req, res) {
   MongoClient.connect(url, function(err, db) {
     if (err) throw err;

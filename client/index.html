@@ -14,10 +14,11 @@
 
 <body>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
- <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
- <script src="serverConnection.js"></script>
+<script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
+<script src="serverConnection.js"></script>
+<script src="requests.js"></script>
 <script>
-
+    var token = localStorage.getItem('token') || null;
     var game = new Phaser.Game("100%", "100%", Phaser.AUTO, '', { create: create, update: update });
     var backgroundColor = "#ffffff";
     var graphics;
