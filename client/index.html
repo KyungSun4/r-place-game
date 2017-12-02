@@ -1,185 +1,76 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE=html>
+<html>
 
-<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
 <head>
-    <meta charset="utf-8" />
-    <title></title>
-	<style>
-		html, body {
-			margin: 0% auto;
-		}
-    </style>
-	<script src="phaser.js"></script>
+  <meta charset="utf-8" />
+  <title></title>
+  <style>
+    html,
+    body {
+      margin: 0% auto;
+      background-color: 'black';
+    }
+  </style>
 </head>
 
 <body>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-<script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
-<script src="serverConnection.js"></script>
-<script src="requests.js"></script>
-<script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
+  <script src="serverConnection.js"></script>
+  <script src="requests.js"></script>
+  <script src="canvasSetup.js"></script>
 
-    var sgrid;
+  <script>
+    var grid
     var token = localStorage.getItem('token') || null;
-    var game = new Phaser.Game("100%", "100%", Phaser.AUTO, '', { create: create, update: update });
-    var backgroundColor = "#ffffff";
-    var graphics;
+    gridWidth = 10;
+    gridHeight = 10;
 
-    var map;
-    var layer;
-    var marker;
-    var grid = [];
+    var keystate;
+    var canvas, ctx,
+      canX = [],
+      canY = [],
+      mouseIsDown = 0,
+      touchCount = 0;
+    var tttouch = 0;
+    var width;
+    var height;
 
-    var upKey;
-    var downKey;
-    var leftKey;
-    var rightKey;
+    var mouseX;
+    var mouseY;
+    var pointWidth;
 
-    var camera;
-    var gameWidth = 1500;
-    var gameHeight = 750;
 
-    var cellSize = 25;
 
-    function create() {
-
-        // Move around screen
-	    game.world.setBounds(0, 0, gameWidth + 2 * cellSize, gameHeight + 2 * cellSize);
-	    game.physics.startSystem(Phaser.Physics.P2JS);
-	    camera = game.add.sprite(game.world.centerX, game.world.centerY);
-	    camera.width = window.innerWidth;
-	    camera.height = window.innerHeight;
-	    game.physics.p2.enable(camera);
-	    camera.body.fixedRotation = true;
-	    game.camera.follow(camera, Phaser.Camera.FOLLOW_LOCKON, 0.07, 0.07);
-
-        // User controls
-        upKey = game.input.keyboard.addKey(Phaser.Keyboard.W);
-        downKey = game.input.keyboard.addKey(Phaser.Keyboard.S);
-        leftKey = game.input.keyboard.addKey(Phaser.Keyboard.A);
-        rightKey = game.input.keyboard.addKey(Phaser.Keyboard.D);
-
-        // Setting up map
-        game.stage.backgroundColor = backgroundColor;
-        map = game.add.tilemap();
-        layer = map.create('grid', gameWidth / cellSize, gameHeight / cellSize, cellSize, cellSize);
-
-        // Drawing grid cells and populating 2D array of grid data
-	    graphics = game.add.graphics(0, 0);
-	    graphics.lineStyle(0.25, "#fcfcfc", 1);
-        graphics.beginFill(game.stage.backgroundColor, 1);
-        var color = Phaser.Color.hexToRGB(backgroundColor);
-        for (y = 0; y < gameHeight / cellSize; y++) {
-            grid[y] = [];
-            for (x = 0; x < gameWidth / cellSize; x++) {
-                graphics.drawRect((x + 1) * cellSize, (y + 1) * cellSize, cellSize, cellSize);
-                grid[y][x] = {
-                    x: x,
-                    y: y,
-                    color: color,
-                    walls: {
-                        top: false,
-                        right: false,
-                        bottom: false,
-                        left: false
-                    }
-                };
-		    }
-	    }
-	    graphics.endFill();
-
-        // Cursor marker
-        marker = game.add.graphics(0, 0);
-        marker.lineStyle(1.25, "#fcfcfc", 1);
-        marker.drawRect(0, 0, cellSize, cellSize);
-        game.input.addMoveCallback(updateMarker, this);
-        game.input.onDown.add(getTileProperties, this);
-
-    }
-
-    function getTileProperties() {
-
-        var clickX = Math.floor(game.input.activePointer.worldX / cellSize) - 1;
-        var clickY = Math.floor(game.input.activePointer.worldY / cellSize) - 1;
-
-        for (y = 0; y < gameHeight / cellSize; y++) {
-            for (x = 0; x < gameWidth / cellSize; x++) {
-                if (grid[y][x].x == clickX && grid[y][x].y == clickY) {
-                    console.log(grid[y][x]);
-
-                    //Fill cell color
-                    var randomColor = Phaser.Color.getRandomColor()
-                    graphics.beginFill(randomColor, 1);
-                    graphics.lineStyle(0.25, "#fcfcfc", 1);
-                    graphics.drawRect((x + 1) * cellSize, (y + 1) * cellSize, cellSize, cellSize);
-                    grid[y][x].color = randomColor;
-
-                    //Draw cell walls
-                    graphics.lineStyle(3, "#fcfcfc", 1);
-
-                    //Draw top wall
-                    graphics.moveTo(x * cellSize + 2 * cellSize, y * cellSize + cellSize);
-                    graphics.lineTo(x * cellSize + cellSize, y * cellSize + cellSize);
-                    grid[y][x].walls.top = true;
-
-                    //Draw right wall
-                    graphics.moveTo(x * cellSize + 2 * cellSize, y * cellSize + 2 * cellSize);
-                    graphics.lineTo(x * cellSize + 2 * cellSize, y * cellSize + cellSize);
-                    grid[y][x].walls.right = true;
-
-                    //Draw bottom wall
-                    graphics.moveTo(x * cellSize + 2 * cellSize, y * cellSize + 2 * cellSize);
-                    graphics.lineTo(x * cellSize + cellSize, y * cellSize + 2 * cellSize);
-                    grid[y][x].walls.bottom = true;
-
-                    //Draw left wall
-                    graphics.moveTo(x * cellSize + cellSize, y * cellSize + 2 * cellSize);
-                    graphics.lineTo(x * cellSize + cellSize, y * cellSize + cellSize);
-                    grid[y][x].walls.left = true;
-
-                    console.log(grid[y][x]);
-                    break;
-                }
+    init();
+    var loop = function() {
+      if (grid != null) {
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        for (var y = 0; y < gridHeight; y++) {
+          for (var x = 0; x < gridHeight; x++) {
+            point = grid[y][x];
+            if (grid[y][x].team == 0) {
+              ctx.fillStyle = "blue";
+              ctx.fillRect(x * pointWidth, y * pointHeight, pointWidth, pointHeight);
             }
-        }
+            if (grid[y][x].team == 1) {
+              ctx.fillStyle = "red";
+              ctx.fillRect(x * pointWidth, y * pointHeight, pointWidth, pointHeight);
+            }
 
+          }
+        }
+      } else {
+        console.log("no grid");
     }
+    window.requestAnimationFrame(loop, canvas);
+  }
+  window.requestAnimationFrame(loop, canvas);
 
-    function updateMarker() {
-
-        if (game.input.activePointer.worldX > cellSize && game.input.activePointer.worldY > cellSize
-            && game.input.activePointer.worldX < gameWidth + cellSize && game.input.activePointer.worldY < gameHeight + cellSize) {
-            marker.x = layer.getTileX(game.input.activePointer.worldX) * cellSize;
-            marker.y = layer.getTileY(game.input.activePointer.worldY) * cellSize;
-        }
-
-    }
-
-    function update() {
-
-        camera.body.setZeroVelocity();
-
-        if (upKey.isDown)
-        {
-            camera.body.moveUp(300)
-        }
-        else if (downKey.isDown)
-        {
-            camera.body.moveDown(300);
-        }
-
-        if (leftKey.isDown)
-        {
-            camera.body.moveLeft(300);
-        }
-        else if (rightKey.isDown)
-        {
-            camera.body.moveRight(300);
-        }
-
-    }
-
-</script>
-
+  var click = function() {
+    console.log(mouseX+", "+ mouseY);
+  }
+  </script>
 </body>
+
 </html>

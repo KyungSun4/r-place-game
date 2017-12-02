@@ -6,6 +6,8 @@ var express = require('express');
 var app = express();
 var serv = require('http').Server(app);
 var mongoose = require('mongoose');
+
+var io = require('socket.io')(serv);
 //var User = require('./models/User')
 var mapWidth = 10;
 var mapHeight = 10;
@@ -68,7 +70,7 @@ MongoClient.connect(url, function(err, db) {
     }); 
 
 
-    var newMap =[]
+    var newMap = []
 
     for (var x = 0; x < mapWidth; x++) {
       for (var y = 0; y < mapHeight; y++) {
@@ -82,12 +84,16 @@ MongoClient.connect(url, function(err, db) {
             left: null,
             right: null
           },
-          team: null,
-          object: null
+          team: Math.round(Math.random()),
+          object: null,
+          color: "#f44842"
         });
       }
     }
-    db.collection("map").insert(newMap,function(err, res) {
+    db.collection("map").insert(newMap, function(err, res) {
+      getFullMap(mapWidth, mapHeight, function(map) {
+        console.log(map);
+      });
       db.close();
     });
   }
@@ -125,21 +131,37 @@ var getFullMap = function(w, h, callback) {
 
 //on connection get map from database and send to user
 //var socket;
-var io = require('socket.io')(serv, {});
+
 io.sockets.on('connection', function(socket) {
+  socket.id = Math.random();
+  socketlist[socket.id] = socket;
+  console.log('socket connection' + socket.id);
+  socket.on('disconnect', function() {
+    delete socketlist[socket.id];
+    console.log(socket.id + "disconnected");
+  });
+
   //socket = socket;
   //gets full map as array and sends to client
   getFullMap(mapWidth, mapHeight, function(map) {
-    console.log(map)
+    //console.log(map)
     socket.emit('start', map);
   });
 });
+
+var socketlist = {};
 
 
 //game logic loop
 var gameLoop = require("./server/gameLoop");
 setInterval(function() {
   gameLoop();
+  getFullMap(mapWidth, mapHeight, function(map) {
+    for (var i in socketlist) {
+      var socket = socketlist[i];
+      socket.emit('map', map);
+    }
+  });
   //socket.emit('start', map);
 }, 1000 / 1); //updates 1 times a second 1Hz
 //gets api.js and sets as routs

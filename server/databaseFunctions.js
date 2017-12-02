@@ -182,6 +182,23 @@ var functions = {
         callback(true, "worked");
       });
     });
+  },
+  changeTeamAtLocation: function(x, y,team, callback) {
+    MongoClient.connect(url, function(err, db) {
+      if (err) throw err;
+      var query = {}
+      query['x'] = Number(x);
+      query['y'] = Number(y);
+      db.collection("map").updateOne(query, {
+        $set: {
+          "team": team,
+        }
+      }, function(err, res) {
+        if (err) throw err;
+        console.log(res);
+        callback(true, "worked");
+      });
+    });
   }
 }
 
