@@ -1,7 +1,10 @@
-var map;
+var first = true;
 var socket = io();
 console.log("hello");
 socket.on('start', function(data) {
-  map = data;
-  console.log(map);
+  sgrid = data;
+  if (first) {
+    console.log(map);
+    first = false
+  }
 });

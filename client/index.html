@@ -18,6 +18,8 @@
 <script src="serverConnection.js"></script>
 <script src="requests.js"></script>
 <script>
+
+    var sgrid;
     var token = localStorage.getItem('token') || null;
     var game = new Phaser.Game("100%", "100%", Phaser.AUTO, '', { create: create, update: update });
     var backgroundColor = "#ffffff";
