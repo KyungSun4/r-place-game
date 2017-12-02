@@ -7,8 +7,8 @@ var app = express();
 var serv = require('http').Server(app);
 var mongoose = require('mongoose');
 //var User = require('./models/User')
-var mapWidth = 10;
-var mapHeight = 10;
+var mapWidth = 30;
+var mapHeight = 60;
 
 
 var MongoDB = mongoose.connect(url, {

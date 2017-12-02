@@ -67,12 +67,29 @@
         // Drawing grid cells and populating 2D array of grid data
 	    graphics = game.add.graphics(0, 0);
 	    graphics.lineStyle(0.25, "#fcfcfc", 1);
-        graphics.beginFill(game.stage.backgroundColor, 1);
-        var color = Phaser.Color.hexToRGB(backgroundColor);
+        //graphics.beginFill(game.stage.backgroundColor, 1);
+        //var color = Phaser.Color.hexToRGB(backgroundColor);
         for (y = 0; y < gameHeight / cellSize; y++) {
             grid[y] = [];
             for (x = 0; x < gameWidth / cellSize; x++) {
+                var color;
+                if (sgrid != null) {
+                    switch (sgrid[y][x].team) {
+                        case "Blue":
+                            color = "#2679ff";
+                            break;
+                        case "Red":
+                            color = "#ff2626";
+                            break;
+                        default:
+                            color = game.stage.backgroundColor;
+                    }
+                } else {
+                    color = game.stage.backgroundColor;
+                }
+                graphics.beginFill(color, 1);
                 graphics.drawRect((x + 1) * cellSize, (y + 1) * cellSize, cellSize, cellSize);
+                /**
                 grid[y][x] = {
                     x: x,
                     y: y,
@@ -84,6 +101,7 @@
                         left: false
                     }
                 };
+                **/
 		    }
 	    }
 	    graphics.endFill();
@@ -93,7 +111,7 @@
         marker.lineStyle(1.25, "#fcfcfc", 1);
         marker.drawRect(0, 0, cellSize, cellSize);
         game.input.addMoveCallback(updateMarker, this);
-        game.input.onDown.add(getTileProperties, this);
+        //game.input.onDown.add(getTileProperties, this);
 
     }
 
