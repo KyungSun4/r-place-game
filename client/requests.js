@@ -37,6 +37,10 @@ login = function(email, password) {
   });
 }
 
+logout= function() {
+  localStorage.setItem('token', null);
+}
+
 register = function(email, password,password2, username) {
   if(password != password2) {
       alert("passwords do not match");

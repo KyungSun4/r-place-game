@@ -226,7 +226,7 @@ Routes.post('/move', function(req, res) {
         function requestResultCb(success, msg) {
           //if move was succeful
           if (success) {
-            //set users time to 5000
+            //set users time to 10
             MongoClient.connect(url, function(err, db) {
               console.log(user.username);
               if (err) throw err;
@@ -235,7 +235,7 @@ Routes.post('/move', function(req, res) {
               };
               var newvalues = {
                 $set: {
-                  "time": 5000
+                  "time": 10
                 }
               };
               User.updateOne(myquery, newvalues, function(err, res) {
@@ -263,7 +263,9 @@ Routes.post('/move', function(req, res) {
         if (moveType == "placeSoldier") {
           var soldier = {
             xDir: 1,
-            yDir: 0
+            yDir: 0,
+            team: user.team,
+            type:'soldier',
           }; //new Soldier();
           //check if team is correct
           databaseFunctions.getTeamAtLocation(req.body.x, req.body.y, function(locationTeam) {

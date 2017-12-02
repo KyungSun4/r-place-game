@@ -20,13 +20,14 @@ function mouseMove(e) {
   drag = 1;
   mouseX = e.pageX - canvas.offsetLeft;
   mouseY = e.pageY - canvas.offsetTop;
+  updateCursor();
 }
 
 
 function touchDown() {
   mouseIsDown = 1;
-  touchXY();
-  tttouch = 1;
+  //touchXY();
+  //tttouch = 1;
 }
 
 function touchUp(e) {
@@ -84,9 +85,9 @@ function init() {
   //touch control
   canvas.addEventListener("mousedown", mouseDown, false);
   canvas.addEventListener("mousemove", mouseMove, false);
-  //document.addEventListener("touchstart", touchDown, false);
-  //canvas.addEventListener("touchend", touchUp, false);
-  //canvas.addEventListener("touchmove", touchXY, false);
-  //document.addEventListener("touchcancel", touchUp, false);
+  document.addEventListener("touchstart", mouseDown, false);
+  canvas.addEventListener("touchend", mouseUp, false);
+  canvas.addEventListener("touchmove", mouseMove, false);
+  document.addEventListener("touchcancel", mouseUp, false);
   document.addEventListener("mouseup", mouseUp, false);
 }

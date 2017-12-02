@@ -121,7 +121,7 @@ var functions = {
           "time": -1
         }
       }
-      User.update(query, newvalues, function(err, res) {
+      User.updateMany(query, newvalues, function(err, res) {
         if (err) throw err;
         db.close();
       });
