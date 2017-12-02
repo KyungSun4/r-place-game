@@ -124,8 +124,10 @@ var getFullMap = function(w, h, callback) {
 }
 
 //on connection get map from database and send to user
+//var socket;
 var io = require('socket.io')(serv, {});
 io.sockets.on('connection', function(socket) {
+  //socket = socket;
   //gets full map as array and sends to client
   getFullMap(mapWidth, mapHeight, function(map) {
     console.log(map)
@@ -138,6 +140,7 @@ io.sockets.on('connection', function(socket) {
 var gameLoop = require("./server/gameLoop");
 setInterval(function() {
   gameLoop();
+  //socket.emit('start', map);
 }, 1000 / 1); //updates 1 times a second 1Hz
 //gets api.js and sets as routs
 var Routes = require("./routes/api")
