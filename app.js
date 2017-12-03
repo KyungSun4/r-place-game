@@ -9,8 +9,8 @@ var mongoose = require('mongoose');
 
 var io = require('socket.io')(serv);
 //var User = require('./models/User')
-var mapWidth = 10;
-var mapHeight = 10;
+var mapWidth = 60;
+var mapHeight = 30;
 
 
 var MongoDB = mongoose.connect(url, {

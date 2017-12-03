@@ -3,7 +3,7 @@ var drag = 0;
 
 function mouseUp() {
   mouseIsDown = 0;
-  if(drag==0) {
+  if (drag == 0) {
     click();
   }
   //mouseXY();
@@ -16,6 +16,7 @@ function mouseDown(e) {
   mouseY = e.pageY - canvas.offsetTop;
   //mouseXY();
 }
+
 function mouseMove(e) {
   drag = 1;
   mouseX = e.pageX - canvas.offsetLeft;
@@ -63,7 +64,7 @@ function init() {
 
   width = window.innerWidth;
   height = window.innerHeight;
-  canvas.width = height * 2;
+  canvas.width = height * 2 * gridWidth / gridHeight;
   canvas.height = height * 2;
   pointWidth = canvas.height / gridHeight;
   pointHeight = canvas.height / gridHeight;

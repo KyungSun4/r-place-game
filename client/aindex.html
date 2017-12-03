@@ -116,6 +116,19 @@
 
     function update() {
 
+
+      graphics.lineStyle(0.25, "#fcfcfc", 1);
+      graphics.beginFill(game.stage.backgroundColor, 1);
+      var color = Phaser.Color.hexToRGB(backgroundColor);
+      for (y = 0; y < 10; y++) {
+        for (x = 0; x < 10; x++) {
+          graphics.drawRect((x + 1) * cellSize, (y + 1) * cellSize, cellSize, cellSize);
+        }
+      }
+      graphics.endFill();
+
+
+
       camera.body.setZeroVelocity();
 
       if (upKey.isDown) {

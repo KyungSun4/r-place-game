@@ -23,8 +23,8 @@
   <script>
     var grid
     var token = localStorage.getItem('token') || null;
-    gridWidth = 10;
-    gridHeight = 10;
+    gridWidth = 60;
+    gridHeight = 30;
 
     var keystate;
     var canvas, ctx,
@@ -75,7 +75,7 @@
           }
         }
         ctx.fillStyle = "black";
-        ctx.lineWidth = "12";
+        ctx.lineWidth = "4";
         ctx.strokeRect(cursorX * pointWidth, cursorY * pointHeight, pointWidth, pointHeight);
       } else {
         console.log("no grid");
@@ -85,15 +85,15 @@
   window.requestAnimationFrame(loop, canvas);
 
   var click = function() {
-    x = parseInt(mouseX/canvas.width*10);
-    y = parseInt(mouseY/canvas.height*10);
+    x = parseInt(mouseX/canvas.width*gridWidth);
+    y = parseInt(mouseY/canvas.height*gridHeight);
     console.log(x+", "+ y);
     //TODO: procces click as request based on current menu selection
     placeSoldier(x,y,1,0)
   }
   var updateCursor = function() {
-    cursorX = parseInt(mouseX/canvas.width*10);
-    cursorY = parseInt(mouseY/canvas.height*10);
+    cursorX = parseInt(mouseX/canvas.width*gridWidth);
+    cursorY = parseInt(mouseY/canvas.height*gridHeight);
   }
   </script>
 </body>
