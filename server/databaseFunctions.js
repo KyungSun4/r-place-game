@@ -1,7 +1,15 @@
 var url = "mongodb://localhost:27017/mydb";
 var MongoClient = require('mongodb').MongoClient;
 var User = require('../models/user');
+nullArray = [];
+for(var y =0; y<30;y++) {
+  nullArray.push([]);
+  for(var x =0; x<60;x++) {
+    nullArray[y].push(null);
+  }
+}
 var functions = {
+  //Welcome Callback Land
   //adds soldier to map at defined position does not check if allowed
   placeSoldier: function(x, y, soldier, callback) {
     console.log(x + " " + y);
@@ -55,10 +63,63 @@ var functions = {
       });
     });
   },
+  updateObjects: function() {
+
+    MongoClient.connect(url, function(err, db) {
+      if (err) throw err;
+      db.collection("map").find({
+        object: {
+          $ne: null
+        }
+      }).toArray(function(err, res) {
+        soldiers = nullArray;
+        walls = nullArray;
+        for(obj in res) {
+          if(obj.type = 'soldier') {
+            soldiers[obj.y][obj.x]=obj;
+          } else if(obj.type = 'wall') {
+            walls[obj.y][obj.x]=obj;
+          }
+        }
+        functions.updateWalls(walls,soldiers,functions.updateSoldiers(soldiers));
+      });
+
+    });
+  },
+  updateWalls: function(walls, callback) {
+    wallToUpdateHealth = [];
+    for (col in walls) {
+      for(wall in col) {
+        if(wall !=null) {
+          nearbyEnemySoldiers=0;
+          if(soldiers[wall.y+1][wall.x].team!= wall.team) {
+            nearbyEnemySoldiers++;
+          }
+          if(soldiers[wall.y][wall.x+1].team!= wall.team) {
+            nearbyEnemySoldiers++;
+          }
+          if(soldiers[wall.y-1][wall.x].team!= wall.team) {
+            nearbyEnemySoldiers++;
+          }
+          if(soldiers[wall.y][wall.x-1].team!= wall.team) {
+            nearbyEnemySoldiers++;
+          }
+          if(nearbyEnemySoldiers!=0) {
+            wallToUpdateHealth.push([wall,nearbyEnemySoldiers]);
+          }
+        }
+      }
+    }
+    calback();
+  },
+  updateSoldiers: function(soldiers) {
+
+  },
   //moves soldier at position in direction it is facing x y specifly location of soldier
   moveSoldier: function(x, y) {
     functions.getObjectAtPosition(x, y, function(soldier) {
-      functions.placeSoldier(x + soldier.xDir, y + soldier.yDir, soldier);
+      //figure out how soldier should move based on Destination
+      functions.placeSoldier(x + Math.sign(soldier.xDest - x), y + Math.sign(soldier.yDest - x), soldier);
       functions.removeObject(x, y);
     });
   },
@@ -183,7 +244,7 @@ var functions = {
       });
     });
   },
-  changeTeamAtLocation: function(x, y,team, callback) {
+  changeTeamAtLocation: function(x, y, team, callback) {
     MongoClient.connect(url, function(err, db) {
       if (err) throw err;
       var query = {}

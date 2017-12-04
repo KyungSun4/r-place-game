@@ -50,7 +50,7 @@
       if (grid != null) {
         ctx.fillRect(0, 0, canvas.width, canvas.height);
         for (var y = 0; y < gridHeight; y++) {
-          for (var x = 0; x < gridHeight; x++) {
+          for (var x = 0; x < gridWidth; x++) {
             point = grid[y][x];
             if (grid[y][x].team == 0) {
               ctx.fillStyle = "blue";
