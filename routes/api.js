@@ -265,19 +265,21 @@ Routes.post('/move', function(req, res) {
             xDir: 1,
             yDir: 0,
             team: user.team,
-            type:'soldier',
+            type: 'soldier',
           }; //new Soldier();
           //check if team is correct
-          databaseFunctions.getTeamAtLocation(req.body.x, req.body.y, function(locationTeam) {
-            if (locationTeam == user.team) {
-              //try to place soldier
-              databaseFunctions.legalPlaceSoldier(req.body.x, req.body.y, soldier, function(dres) {
-                console.log("place soldier at:" + req.body.x + ", " + req.body.y + " " + dres);
-                requestResultCb(dres, "soldier placed at:" + req.body.x + ", " + req.body.y);
-              });
-            } else {
-              requestResultCb(false, "inccorect team, Your team: " + user.team + " location" + req.body.x + ", " + req.body.y + " team: " + locationTeam);
-            }
+          MongoClient.connect(url, function(err, db) {
+            databaseFunctions.getTeamAtLocation(db,req.body.x, req.body.y, function(locationTeam) {
+              if (locationTeam == user.team) {
+                //try to place soldier
+                databaseFunctions.legalPlaceSoldier(db,req.body.x, req.body.y, soldier, function(dres) {
+                  console.log("place soldier at:" + req.body.x + ", " + req.body.y + " " + dres);
+                  requestResultCb(dres, "soldier placed at:" + req.body.x + ", " + req.body.y);
+                });
+              } else {
+                requestResultCb(false, "inccorect team, Your team: " + user.team + " location" + req.body.x + ", " + req.body.y + " team: " + locationTeam);
+              }
+            });
           });
         }
         //change soldier Destination
