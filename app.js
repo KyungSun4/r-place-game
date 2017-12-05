@@ -91,10 +91,10 @@ MongoClient.connect(url, function(err, db) {
       }
     }
     db.collection("map").insert(newMap, function(err, res) {
+      db.close();
       getFullMap(mapWidth, mapHeight, function(map) {
         console.log(map);
       });
-      db.close();
     });
   }
 });
@@ -122,8 +122,9 @@ var getFullMap = function(w, h, callback) {
         map[position.y][position.x] = position;
       }
       //callback with map
-      callback(map);
+
       db.close();
+      callback(map);
     });;
   });
 
