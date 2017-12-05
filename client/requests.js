@@ -1,5 +1,5 @@
 //server request functions using Jquery and Ajax requests
-placeSoldier = function(x,y,xDir,yDir) {
+placeSoldier = function(x,y,xDest,yDest) {
   $.ajax({
     url: 'http://localhost:2000/api/move',
     type: 'post',
@@ -7,8 +7,8 @@ placeSoldier = function(x,y,xDir,yDir) {
       moveType: 'placeSoldier',
       x: x,
       y: y,
-      xDir: xDir,
-      yDir: yDir
+      xDest: xDest,
+      yDest: yDest
     },
     headers: {
       'x-access-token': token,

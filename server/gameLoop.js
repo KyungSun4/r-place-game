@@ -4,6 +4,8 @@ var url = "mongodb://127.0.0.1:27017/mydb";
 var loop = function() {
   MongoClient.connect(url, function(err, db) {
     databaseFunctions.updatePlayerTimes(db);
+    databaseFunctions.updateSoldierTimes(db);
+    databaseFunctions.updateObjects(db);
   });
   //databaseFunctions.updateObjects();
 }

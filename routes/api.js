@@ -262,17 +262,21 @@ Routes.post('/move', function(req, res) {
         //place soldier on map at given location
         if (moveType == "placeSoldier") {
           var soldier = {
-            xDir: 1,
-            yDir: 0,
+            xDest: 1,
+            yDest: 0,
             team: user.team,
             type: 'soldier',
+            health: 4,
+            attack: 1,
+            attackTime: 10,
+            moveTime: 10,
           }; //new Soldier();
           //check if team is correct
           MongoClient.connect(url, function(err, db) {
-            databaseFunctions.getTeamAtLocation(db,req.body.x, req.body.y, function(locationTeam) {
+            databaseFunctions.getTeamAtLocation(db, req.body.x, req.body.y, function(locationTeam) {
               if (locationTeam == user.team) {
                 //try to place soldier
-                databaseFunctions.legalPlaceSoldier(db,req.body.x, req.body.y, soldier, function(dres) {
+                databaseFunctions.legalPlaceSoldier(db, req.body.x, req.body.y, soldier, function(dres) {
                   console.log("place soldier at:" + req.body.x + ", " + req.body.y + " " + dres);
                   requestResultCb(dres, "soldier placed at:" + req.body.x + ", " + req.body.y);
                 });
