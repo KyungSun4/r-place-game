@@ -66,40 +66,43 @@ var functions = {
     }).toArray(function(err, res) {
       soldierLocs = nullArray;
       wallLocs = nullArray;
-      toUpdateSoldiers = [];
+      toUpdateSoldiersLocs = [];
       for (var locI = 0; locI < res.length; locI++) {
         loc = res[locI];
         if (loc.object.type == 'soldier') {
+          console.log(loc);
           soldierLocs[loc.y][loc.x] = loc;
-          if (loc.object.moveTime < 0 || loc.object.attackTime < 0) {
-            toUpdateSoldiers.push(loc);
+          if (loc.object.moveTime <= 0 || loc.object.attackTime <= 0) {
+            toUpdateSoldiersLocs.push(loc);
           }
         } else if (loc.object.type = 'wall') {
           walls[loc.y][loc.x] = loc;
         }
 
       }
-      functions.updateSoldiers(db, toUpdateSoldiers, soldierLocs, wallLocs);
+      functions.updateSoldiers(db, toUpdateSoldiersLocs, wallLocs, soldierLocs);
     });
   },
-  updateSoldiers: function(db, toUpdateSoldiers, wallLocs, soldierLocs) {
-    for (var soldierLocI = 0; soldierLocI < toUpdateSoldiers.length; soldierLocI++) {
+  updateSoldiers: function(db, toUpdateSoldiersLocs, wallLocs, soldierLocs) {
+    for (var soldierLocI = 0; soldierLocI < toUpdateSoldiersLocs.length; soldierLocI++) {
       //decrease health of all enemy walls nearby and attack enemy soldiers nearby
-      attack(db, toUpdateSoldiers[soldierLocI], wallLocs, soldierLocs);
+      functions.attack(db, toUpdateSoldiersLocs[soldierLocI], wallLocs, soldierLocs);
       //try to move soldier
       //reset solder time
       db.collection("map").updateOne({
-        _id: toUpdateSoldiers[soldierLocI]._id
+        _id: toUpdateSoldiersLocs[soldierLocI]._id
       }, {
-        'moveTime': 10,
-        'attackTime': 10
+        '$set': {
+          'object.moveTime': 10,
+          'object.attackTime': 10
+        }
       }, function(err, res) {
         if (err) throw err;
       });
     }
   },
   attack: function(db, soldierLoc, wallLocs, soldierLocs) {
-    soldier = soldierLoc.obj;
+    soldier = soldierLoc.object;
     //check each neghboring location for an enemy wall
     directions = [
       [0, 1],
@@ -109,8 +112,8 @@ var functions = {
     ];
     for (var posI = 0; posI < directions.length; posI++) {
       var pos = directions[posI];
-      var nearbyLocation = wallLocs[soldierLoc.y + directions[0]][soldierLoc.obj.x + directions[1]];
-      if (nearbyLocation.obj != null && nearbyLocation.obj.team != soldierLoc.team) {
+      var nearbyLocation = wallLocs[soldierLoc.y + pos[0]][soldierLoc.x + pos[1]];
+      if (nearbyLocation != null && nearbyLocation.object.team != soldierLoc.object.team) {
         //if opposite team, attackTime
         updateHealth(nearbyLocation, soldier.attack);
       }
@@ -209,8 +212,8 @@ var functions = {
     };
     var newvalues = {
       $inc: {
-        "attackTime": -1,
-        "moveTime": -1
+        "object.attackTime": -1,
+        "object.moveTime": -1
       }
     }
     db.collection("map").updateMany(query, newvalues, function(err, res) {
