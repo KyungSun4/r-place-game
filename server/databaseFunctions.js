@@ -57,59 +57,76 @@ var functions = {
     });
 
   },
-  /*
+
   updateObjects: function(db) {
     db.collection("map").find({
       object: {
         $ne: null
       }
     }).toArray(function(err, res) {
-      soldiers = nullArray;
-      walls = nullArray;
-      for (obj in res) {
-        if (obj.type = 'soldier') {
-          soldiers[obj.y][obj.x] = obj;
-        } else if (obj.type = 'wall') {
-          walls[obj.y][obj.x] = obj;
+      soldierLocs = nullArray;
+      wallLocs = nullArray;
+      for (loc in res) {
+        if (loc.obj.type = 'soldier') {
+          soldierLocs[loc.y][loc.x] = loc;
+        } else if (loc.obj.type = 'wall') {
+          walls[loc.y][loc.obj.x] = loc;
         }
       }
-      functions.updateWalls(db, walls, soldiers, functions.updateSoldiers(soldiers));
+      functions.updateSoldiers(db, soldierLocs, wallLocs);
     });
-
   },
-  */
-  updateWalls: function(db, walls, callback) {
+  updateSoldiers: function(db, wallLocs, soldierLocs, callback) {
     wallToUpdateHealth = [];
-    for (col in walls) {
-      for (wall in col) {
-        if (wall != null) {
-          //check each neghboring location for an enemy soldier and add up their attacks
-          healthChange = 0;
-          if (soldiers[wall.y + 1][wall.x].team != wall.team) {
-            healthChange += soldiers[wall.y + 1][wall.x].attack;
-          }
-          if (soldiers[wall.y][wall.x + 1].team != wall.team) {
-            healthChange += soldiers[wall.y][wall.x + 1].attack;
-          }
-          if (soldiers[wall.y - 1][wall.x].team != wall.team) {
-            healthChange += soldiers[wall.y - 1][wall.x].attack;
-          }
-          if (soldiers[wall.y][wall.x - 1].team != wall.team) {
-            healthChange += soldiers[wall.y][wall.x - 1].attack;
-          }
-          if (healthChange != 0) {
-            if (wall.health - healthChange < 0) {
-              //remove wall
-              db.update()
-            }
-          }
+    for (col in soldierLocs) {
+      for (soldierLoc in col) {
+        soldier = soldierLoc.obj;
+        if (soldierLoc.obj != null) {
+          //decrease health of all enemy walls nearby
+          attackWalls(db, wallLocs, soldierLocs);
+          //try to move soldier
+          //attack enemy soldiers nearby
         }
       }
     }
-    calback();
-  },
-  updateSoldiers: function(soldiers) {
 
+  },
+  attackWalls: function(db, wallLocs, soldierLocs) {
+    //check each neghboring location for an enemy wall
+    directions = [
+      [0, 1],
+      [1, 0],
+      [0, -1],
+      [-1, 0]
+    ];
+    for (pos in directions) {
+      var nearbyLocation = wallLocs[soldierLoc.y + directions[0]][soldierLoc.obj.x + directions[1]];
+      if (nearbyLocation.obj != null && nearbyLocation.obj.team != soldierLoc.team) {
+        wall = nearbyLocation.obj;
+        //if wall is destroyed
+        if (wall.health - soldier.attack <= 0) {
+          //remove wall
+          db.updateOne({
+            _id: nearbyLocation._id
+          }, {
+            object: null
+          }, function(err, res) {
+            if (err) throw err;
+          });
+        } else {
+          //increment health
+          db.updateOne({
+            _id: nearbyLocation._id
+          }, {
+            $inc: {
+              'health': -soldier.attack
+            }
+          }, function(err, res) {
+            if (err) throw err;
+          });
+        }
+      }
+    }
   },
   //moves soldier at position in direction it is facing x y specifly location of soldier
   moveSoldier: function(x, y) {
