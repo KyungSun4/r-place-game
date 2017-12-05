@@ -7,30 +7,8 @@ var loop = function() {
     databaseFunctions.updatePlayerTimes(db);
     databaseFunctions.updateSoldierTimes(db);
     databaseFunctions.updateObjects(db);
+    //update teritory
   });
   //databaseFunctions.updateObjects();
-}
-
-var update = function() {
-  updateObjects();
-  updateWalls();
-  updateTerritory();
-}
-var updateObjects = function() {
-  //check if object is wall or soldier
-  updateSoldiers();
-  updateWalls();
-}
-var updateSoldiers = function() {
-  //update soldier locations
-  //update healths
-}
-var updateWalls = function() {
-  //update soldier locations
-  //update healths
-}
-var updateTerritory = function() {
-  //update soldier locations
-  //update healths
 }
 module.exports = loop;
