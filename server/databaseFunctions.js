@@ -89,6 +89,13 @@ var functions = {
       functions.attack(db, toUpdateSoldiersLocs[soldierLocI], wallLocs, soldierLocs);
       //try to move soldier
       //reset solder time
+
+
+
+      //NOTE TODO attack counter should remain ready unless just attacked, same with move probaly
+
+
+
       db.collection("map").updateOne({
         _id: toUpdateSoldiersLocs[soldierLocI]._id
       }, {
@@ -115,19 +122,21 @@ var functions = {
       var nearbyLocation = wallLocs[soldierLoc.y + pos[0]][soldierLoc.x + pos[1]];
       if (nearbyLocation != null && nearbyLocation.object.team != soldierLoc.object.team) {
         //if opposite team, attackTime
-        updateHealth(nearbyLocation, soldier.attack);
+        functions.updateHealth(db, nearbyLocation, soldier.attack);
       }
     }
   },
-  updateHealth: function(attackedLocation, soldierAttack) {
-    object = attackedLocation.obj;
+  updateHealth: function(db, attackedLocation, soldierAttack) {
+    object = attackedLocation.object;
     //if object is dead remove it
     if (object.health - soldierAttack <= 0) {
       //remove wall
       db.collection("map").updateOne({
         _id: attackedLocation._id
       }, {
-        object: null
+        $set: {
+          "object": null,
+        }
       }, function(err, res) {
         if (err) throw err;
       });
@@ -137,7 +146,7 @@ var functions = {
         _id: attackedLocation._id
       }, {
         $inc: {
-          'health': -soldierAttack
+          "object.health": -soldierAttack,
         }
       }, function(err, res) {
         if (err) throw err;
