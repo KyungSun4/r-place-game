@@ -86,6 +86,7 @@ Routes.get('/login', function(req, res) {
   res.sendFile(path.resolve('client/loginFinal.html'));
 });
 
+
 //procceses login form
 Routes.post('/login', function(req, res) {
   console.log(req.body.email);
@@ -204,6 +205,20 @@ Routes.post('/team0', function(req, res) {
       message: 'NOt 0'
     });
   }
+});
+
+Routes.post('/getplayertime', function(req, res) {
+  //find user in database
+  User.findOne({
+    email: req.decoded.email
+  }, function(err, user) {
+    if (err) throw err;
+    if (user) {
+      res.json({
+        time: user.time
+      });
+    }
+  });
 });
 
 Routes.post('/move', function(req, res) {
