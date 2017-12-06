@@ -261,30 +261,34 @@ Routes.post('/move', function(req, res) {
 
         //place soldier on map at given location
         if (moveType == "placeSoldier") {
-          var soldier = {
-            xDest: 1,
-            yDest: 0,
-            team: user.team,
-            type: 'soldier',
-            health: 4,
-            attack: 1,
-            attackTime: 10,
-            moveTime: 10,
-          }; //new Soldier();
-          //check if team is correct
-          MongoClient.connect(url, function(err, db) {
-            databaseFunctions.getTeamAtLocation(db, req.body.x, req.body.y, function(locationTeam) {
-              if (locationTeam == user.team) {
-                //try to place soldier
-                databaseFunctions.legalPlaceSoldier(db, req.body.x, req.body.y, soldier, function(dres) {
-                  console.log("place soldier at:" + req.body.x + ", " + req.body.y + " " + dres);
-                  requestResultCb(dres, "soldier placed at:" + req.body.x + ", " + req.body.y);
-                });
-              } else {
-                requestResultCb(false, "inccorect team, Your team: " + user.team + " location" + req.body.x + ", " + req.body.y + " team: " + locationTeam);
-              }
+          if (!(req.body.xDest == req.body.x || req.body.yDest == req.body.y)) {
+            requestResultCb(false, 'Destination' + req.body.yDest + ', ' + req.body.xDest + 'invalid');
+          } else {
+            var soldier = {
+              xDest: req.body.xDest,
+              yDest: req.body.yDest,
+              team: user.team,
+              type: 'soldier',
+              health: 4,
+              attack: 1,
+              attackTime: 10,
+              moveTime: 10,
+            }; //new Soldier();
+            //check if team is correct
+            MongoClient.connect(url, function(err, db) {
+              databaseFunctions.getTeamAtLocation(db, req.body.x, req.body.y, function(locationTeam) {
+                if (locationTeam == user.team) {
+                  //try to place soldier
+                  databaseFunctions.legalPlaceSoldier(db, req.body.x, req.body.y, soldier, function(dres) {
+                    console.log("place soldier at:" + req.body.x + ", " + req.body.y + " " + dres);
+                    requestResultCb(dres, "soldier placed at:" + req.body.x + ", " + req.body.y);
+                  });
+                } else {
+                  requestResultCb(false, "inccorect team, Your team: " + user.team + " location" + req.body.x + ", " + req.body.y + " team: " + locationTeam);
+                }
+              });
             });
-          });
+          }
         }
         //change soldier Destination
         if (moveType == "changeSoldierDestination") {
