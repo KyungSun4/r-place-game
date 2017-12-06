@@ -1,10 +1,12 @@
 var url = "mongodb://localhost:27017/mydb";
 var MongoClient = require('mongodb').MongoClient;
 var User = require('../models/user');
+var width = 60;
+var height = 30;
 nullArray = [];
-for (var y = 0; y < 30; y++) {
+for (var y = 0; y < height; y++) {
   nullArray.push([]);
-  for (var x = 0; x < 60; x++) {
+  for (var x = 0; x < width; x++) {
     nullArray[y].push(null);
   }
 }
@@ -17,12 +19,10 @@ var functions = {
     query['x'] = Number(x);
     query['y'] = Number(y);
     console.log(query);
-    db.collection("map").update(query, {
+    db.collection("map").updateOne(query, {
       $set: {
         "object": soldier
       }
-    }, {
-      multi: true
     }, function(err, res) {
       if (err) throw err;
       callback(true);
@@ -98,26 +98,52 @@ var functions = {
         //decrease health of all enemy walls nearby and attack enemy soldiers nearby
         functions.attack(db, currSoldierLoc, wallLocs, soldierLocs);
       }
-      //try to move soldier
-      //reset solder time
+      //TODO: try to move soldier
+      if (currSoldierLoc.object.moveTime <= 0) {
+        functions.tryMove(db, currSoldierLoc, wallLocs, soldierLocs);
+      }
 
+
+    }
+  },
+  tryMove: function(db, soldierLoc, wallLocs, soldierLocs) {
+    soldier = soldierLoc.object;
+
+    var xDir = Math.sign(soldier.xDest - soldierLoc.x);
+    var yDir = Math.sign(soldier.yDest - soldierLoc.y);
+    if (soldierLoc.y + yDir >= 0 && soldierLoc.x + xDir >= 0 && soldierLoc.y + yDir < height && soldierLoc.x + xDir < width) {
+      if (wallLocs[soldierLoc.y + yDir][soldierLoc.x + xDir] == null && soldierLocs[soldierLoc.y + yDir][soldierLoc.x + xDir] == null) {
+        //move soldier
+        functions.moveSoldierV2(db, xDir, yDir, soldierLoc);
+        //update soldier time
+
+      }
+    }
+  },
+  moveSoldierV2: function(db, xDir, yDir, soldierLoc) {
+    var object = soldierLoc.object;
+    //reset solder time
+    object.moveTime = 10;
+    //place soldier in new location
+    functions.placeSoldier(db, soldierLoc.x + xDir, soldierLoc.y + yDir, object, function(res) {
+      //remove soldier from old location
       db.collection("map").updateOne({
-        _id: toUpdateSoldiersLocs[soldierLocI]._id
+        _id: soldierLoc._id
       }, {
         $set: {
-          'object.moveTime': 10,
+          'object': null
         }
       }, function(err, res) {
         if (err) throw err;
       });
-    }
+    });
   },
   attack: function(db, soldierLoc, wallLocs, soldierLocs) {
     soldier = soldierLoc.object;
 
     var xDir = Math.sign(soldier.xDest - soldierLoc.x);
     var yDir = Math.sign(soldier.yDest - soldierLoc.y);
-    if (soldierLoc.y + yDir >= 0 && soldierLoc.x + xDir >= 0) {
+    if (soldierLoc.y + yDir >= 0 && soldierLoc.x + xDir >= 0 && soldierLoc.y + yDir < height && soldierLoc.x + xDir < width) {
 
       var nearbyLocation = wallLocs[soldierLoc.y + yDir][soldierLoc.x + xDir];
       if (nearbyLocation == null) {
