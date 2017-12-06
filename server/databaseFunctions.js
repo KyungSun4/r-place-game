@@ -87,6 +87,16 @@ var functions = {
       //for every object found
       for (var locI = 0; locI < res.length; locI++) {
         loc = res[locI];
+        //update territory
+        db.collection("map").updateOne({
+          _id: loc._id
+        }, {
+          $set: {
+            'team': loc.object.team
+          }
+        }, function(err, res) {
+          if (err) throw err;
+        });
         //if its a soldier add to array and check if should be added to the toUpdate array
         if (loc.object.type == 'soldier') {
           //console.log(loc);
@@ -100,6 +110,7 @@ var functions = {
           wallLocs[loc.y][loc.x] = loc;
         }
         //if more objects implemented they should be added here
+
       }
       //update all the soldiers that need to be updated
       functions.updateSoldiers(db, toUpdateSoldiersLocs, wallLocs, soldierLocs);
@@ -140,6 +151,9 @@ var functions = {
     object.moveTime = 10;
     //place soldier in new location
     functions.placeObject(db, soldierLoc.x + xDir, soldierLoc.y + yDir, object, function(res) {
+
+      soldierLocs[soldierLoc.y + yDir][soldierLoc.x + xDir] = object;
+
       //remove soldier from old location
       db.collection("map").updateOne({
         _id: soldierLoc._id
@@ -150,6 +164,7 @@ var functions = {
       }, function(err, res) {
         if (err) throw err;
       });
+      soldierLocs[soldierLoc.y][soldierLoc.x] = null;
     });
   },
   attack: function(db, soldierLoc, wallLocs, soldierLocs) {
