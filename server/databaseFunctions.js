@@ -13,7 +13,7 @@ for (var y = 0; y < height; y++) {
 var functions = {
   //Welcome Callback Land
   //adds soldier to map at defined position does not check if allowed
-  placeSoldier: function(db, x, y, soldier, callback) {
+  placeObject: function(db, x, y, object, callback) {
     console.log(x + " " + y);
     var query = {}
     query['x'] = Number(x);
@@ -21,20 +21,34 @@ var functions = {
     console.log(query);
     db.collection("map").updateOne(query, {
       $set: {
-        "object": soldier
+        "object": object
       }
     }, function(err, res) {
       if (err) throw err;
       callback(true);
       console.log(x + " " + y);
     });
-
   },
   //makes sure that nothing else is in the way when placing the soldier, returns true if succeful false othewise
   legalPlaceSoldier: function(db, x, y, soldier, callback) {
     functions.getObjectAtPosition(db, x, y, function(res) {
       if (res == null) {
-        functions.placeSoldier(db, x, y, soldier, function(s) {
+        functions.placeObject(db, x, y, soldier, function(s) {
+          if (s) {
+            callback(true);
+          } else {
+            callback(false);
+          }
+        });
+      } else {
+        callback(false);
+      }
+    });
+  },
+  legalPlaceWall: function(db, x, y, wall, callback) {
+    functions.getObjectAtPosition(db, x, y, function(res) {
+      if (res == null) {
+        functions.placeObject(db, x, y, wall, function(s) {
           if (s) {
             callback(true);
           } else {
@@ -73,6 +87,16 @@ var functions = {
       //for every object found
       for (var locI = 0; locI < res.length; locI++) {
         loc = res[locI];
+        //update territory
+        db.collection("map").updateOne({
+          _id: loc._id
+        }, {
+          $set: {
+            'team': loc.object.team
+          }
+        }, function(err, res) {
+          if (err) throw err;
+        });
         //if its a soldier add to array and check if should be added to the toUpdate array
         if (loc.object.type == 'soldier') {
           //console.log(loc);
@@ -83,9 +107,10 @@ var functions = {
           }
           //if its a wall add to wall array
         } else if (loc.object.type = 'wall') {
-          walls[loc.y][loc.x] = loc;
+          wallLocs[loc.y][loc.x] = loc;
         }
         //if more objects implemented they should be added here
+
       }
       //update all the soldiers that need to be updated
       functions.updateSoldiers(db, toUpdateSoldiersLocs, wallLocs, soldierLocs);
@@ -125,7 +150,10 @@ var functions = {
     //reset solder time
     object.moveTime = 10;
     //place soldier in new location
-    functions.placeSoldier(db, soldierLoc.x + xDir, soldierLoc.y + yDir, object, function(res) {
+    functions.placeObject(db, soldierLoc.x + xDir, soldierLoc.y + yDir, object, function(res) {
+
+      soldierLocs[soldierLoc.y + yDir][soldierLoc.x + xDir] = object;
+
       //remove soldier from old location
       db.collection("map").updateOne({
         _id: soldierLoc._id
@@ -136,6 +164,7 @@ var functions = {
       }, function(err, res) {
         if (err) throw err;
       });
+      soldierLocs[soldierLoc.y][soldierLoc.x] = null;
     });
   },
   attack: function(db, soldierLoc, wallLocs, soldierLocs) {
@@ -208,7 +237,7 @@ var functions = {
       db.collection("map").updateOne({
         _id: attackedLocation._id
       }, {
-        $inc: {
+        '$inc': {
           "object.health": -soldierAttack,
         }
       }, function(err, res) {
@@ -220,7 +249,7 @@ var functions = {
   moveSoldier: function(x, y) {
     functions.getObjectAtPosition(x, y, function(soldier) {
       //figure out how soldier should move based on Destination
-      functions.placeSoldier(x + Math.sign(soldier.xDest - x), y + Math.sign(soldier.yDest - x), soldier);
+      functions.placeObject(x + Math.sign(soldier.xDest - x), y + Math.sign(soldier.yDest - x), soldier);
       functions.removeObject(x, y);
     });
   },
@@ -229,7 +258,7 @@ var functions = {
     functions.getObjectAtPosition(x, y, function(soldier) {
       functions.getObjectAtPosition(x + soldier.y + soldier.yDir, y, function(obj) {
         if (obj == null) {
-          functions.placeSoldier(x, y, soldier);
+          functions.placeObject(x, y, soldier);
           functions.removeObject(x, y);
           callback(null);
         } else {

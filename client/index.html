@@ -53,21 +53,31 @@
           for (var x = 0; x < gridWidth; x++) {
             point = grid[y][x];
             if (grid[y][x].team == 0) {
-              ctx.fillStyle = "blue";
+              ctx.fillStyle = "#13294b";
               ctx.fillRect(x * pointWidth, y * pointHeight, pointWidth, pointHeight);
             }
             if (grid[y][x].team == 1) {
-              ctx.fillStyle = "orange";
+              ctx.fillStyle = "#E84A27";
               ctx.fillRect(x * pointWidth, y * pointHeight, pointWidth, pointHeight);
             }
             if (grid[y][x].object!= null) {
               if (grid[y][x].object.type == "soldier") {
                 if (grid[y][x].object.team == 0) {
-                  ctx.fillStyle = "black";
+                  ctx.fillStyle = "blue";
                   ctx.fillRect(x * pointWidth, y * pointHeight, pointWidth, pointHeight);
                 }
                 if (grid[y][x].object.team == 1) {
-                  ctx.fillStyle = "white";
+                  ctx.fillStyle = "orange";
+                  ctx.fillRect(x * pointWidth, y * pointHeight, pointWidth, pointHeight);
+                }
+              }
+              if (grid[y][x].object.type == "wall") {
+                if (grid[y][x].object.team == 0) {
+                  ctx.fillStyle = "#4876ba";
+                  ctx.fillRect(x * pointWidth, y * pointHeight, pointWidth, pointHeight);
+                }
+                if (grid[y][x].object.team == 1) {
+                  ctx.fillStyle = "#e8785f";
                   ctx.fillRect(x * pointWidth, y * pointHeight, pointWidth, pointHeight);
                 }
               }

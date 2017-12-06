@@ -309,6 +309,31 @@ Routes.post('/move', function(req, res) {
           }
         }
         //TODO place wall
+        if (moveType == "placeWall") {
+          if (false) {
+            requestResultCb(false, 'invalid');
+          } else {
+            var wall = {
+              team: user.team,
+              type: 'wall',
+              health: 8,
+            }; //new Soldier();
+            //check if team is correct
+            MongoClient.connect(url, function(err, db) {
+              databaseFunctions.getTeamAtLocation(db, req.body.x, req.body.y, function(locationTeam) {
+                if (locationTeam == user.team) {
+                  //try to place soldier
+                  databaseFunctions.legalPlaceWall(db, req.body.x, req.body.y, wall, function(dres) {
+                    console.log("place wall at:" + req.body.x + ", " + req.body.y + " " + dres);
+                    requestResultCb(dres, "wall placed at:" + req.body.x + ", " + req.body.y);
+                  });
+                } else {
+                  requestResultCb(false, "inccorect team, Your team: " + user.team + " location" + req.body.x + ", " + req.body.y + " team: " + locationTeam);
+                }
+              });
+            });
+          }
+        }
 
 
       } else {
