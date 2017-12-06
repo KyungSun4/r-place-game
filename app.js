@@ -70,24 +70,54 @@ MongoClient.connect(url, function(err, db) {
     }); 
 
 
-    var newMap = []
+    var newMap = [];
 
     for (var x = 0; x < mapWidth; x++) {
       for (var y = 0; y < mapHeight; y++) {
         //console.log("(" + x + ", " + y + ")");
-        newMap.push({
-          x: x,
-          y: y,
-          walls: {
-            top: null,
-            bottom: null,
-            left: null,
-            right: null
-          },
-          team: Math.round(Math.random()),
-          object: null,
-          color: "#f44842"
-        });
+        if (x == 0 || x == 1) {
+          newMap.push({
+            x: x,
+            y: y,
+            walls: {
+              top: null,
+              bottom: null,
+              left: null,
+              right: null
+            },
+            team: 0,
+            object: null,
+            color: "#f44842"
+          });
+        } else if (x == mapWidth - 1 || x == mapWidth - 2) {
+          newMap.push({
+            x: x,
+            y: y,
+            walls: {
+              top: null,
+              bottom: null,
+              left: null,
+              right: null
+            },
+            team: 1,
+            object: null,
+            color: "#f44842"
+          });
+        } else {
+          newMap.push({
+            x: x,
+            y: y,
+            walls: {
+              top: null,
+              bottom: null,
+              left: null,
+              right: null
+            },
+            team: null,
+            object: null,
+            color: "#f44842"
+          });
+        }
       }
     }
     db.collection("map").insert(newMap, function(err, res) {
@@ -164,7 +194,7 @@ setInterval(function() {
     }
   });
   //socket.emit('start', map);
-}, 1000 / 1); //updates 1 times a second 1Hz
+}, 1000 / 2); //updates 2 times a second 1Hz
 //gets api.js and sets as routs
 var Routes = require("./routes/api")
 //when connectiong to /api/ will willuse api.js
