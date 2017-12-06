@@ -93,7 +93,7 @@ var functions = {
   },
   updateSoldiers: function(db, toUpdateSoldiersLocs, wallLocs, soldierLocs) {
     for (var soldierLocI = 0; soldierLocI < toUpdateSoldiersLocs.length; soldierLocI++) {
-      currSoldierLoc = toUpdateSoldiersLocs[soldierLocI];
+      var currSoldierLoc = toUpdateSoldiersLocs[soldierLocI];
       if (currSoldierLoc.object.attackTime <= 0) {
         //decrease health of all enemy walls nearby and attack enemy soldiers nearby
         functions.attack(db, currSoldierLoc, wallLocs, soldierLocs);
