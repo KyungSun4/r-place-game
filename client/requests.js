@@ -19,6 +19,24 @@ placeSoldier = function(x, y, xDest, yDest) {
     }
   });
 }
+placeWall = function(x, y) {
+  $.ajax({
+    url: 'http://localhost:2000/api/move',
+    type: 'post',
+    data: {
+      moveType: 'placeWall',
+      x: x,
+      y: y
+    },
+    headers: {
+      'x-access-token': token,
+    },
+    dataType: 'json',
+    success: function(data) {
+      console.info(data);
+    }
+  });
+}
 
 login = function(email, password) {
   $.ajax({
