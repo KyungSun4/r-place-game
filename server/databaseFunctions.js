@@ -79,6 +79,10 @@ var functions = {
         $ne: null
       }
     }).toArray(function(err, res) {
+      if (err) throw err;
+      if(res==null) {
+        console.log(res);
+      }
       //create two emety 2D arrays
       soldierLocs = nullArray.slice();
       wallLocs = nullArray.slice();
@@ -152,7 +156,7 @@ var functions = {
     //place soldier in new location
     functions.placeObject(db, soldierLoc.x + xDir, soldierLoc.y + yDir, object, function(res) {
 
-      soldierLocs[soldierLoc.y + yDir][soldierLoc.x + xDir] = object;
+      soldierLocs[soldierLoc.y + yDir][soldierLoc.x + xDir] = soldierLoc;
 
       //remove soldier from old location
       db.collection("map").updateOne({
@@ -243,6 +247,11 @@ var functions = {
       }, function(err, res) {
         if (err) throw err;
       });
+      if (object.type == 'soldier') {
+        soldierLocs[attackedLocation.y][attackedLocation.x].health = soldierLocs[attackedLocation.y][attackedLocation.x].health-soldierAttack;
+      } else if (object.type == 'wall') {
+        wallLocs[attackedLocation.y][attackedLocation.x].health = wallLocs[attackedLocation.y][attackedLocation.x].health-soldierAttack;
+      }
     }
   },
   //moves soldier at position in direction it is facing x y specifly location of soldier
@@ -302,7 +311,7 @@ var functions = {
     });
   },
   // decerments all player times
-  updatePlayerTimes: function(db) {
+  updatePlayerTimes: function(db,callback) {
     var query = {
       $and: [{
         object: {
@@ -321,10 +330,11 @@ var functions = {
     }
     db.collection("map").updateMany(query, newvalues, function(err, res) {
       if (err) throw err;
+      callback(db);
     });
   },
   //decrement all sodlier counters
-  updateSoldierTimes: function(db) {
+  updateSoldierTimes: function(db,callback) {
     var query = {};
     var newvalues = {
       $inc: {
@@ -333,6 +343,7 @@ var functions = {
     }
     User.updateMany(query, newvalues, function(err, res) {
       if (err) throw err;
+      callback(db);
     });
   },
   getTeamAtLocation: function(db, x, y, callback) {
