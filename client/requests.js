@@ -37,7 +37,27 @@ placeWall = function(x, y) {
     }
   });
 }
-
+//server request functions using Jquery and Ajax requests
+changeSoldierDest = function(x, y, xDest, yDest) {
+  $.ajax({
+    url: 'http://localhost:2000/api/move',
+    type: 'post',
+    data: {
+      moveType: 'changeSoldierDest',
+      x: x,
+      y: y,
+      xDest: xDest,
+      yDest: yDest
+    },
+    headers: {
+      'x-access-token': token,
+    },
+    dataType: 'json',
+    success: function(data) {
+      console.info(data);
+    }
+  });
+}
 login = function(email, password) {
   $.ajax({
     url: 'http://localhost:2000/api/login',
@@ -77,4 +97,23 @@ register = function(email, password, password2, username) {
       }
     });
   }
+}
+
+
+
+getPlayerTime = function() {
+  $.ajax({
+    url: 'http://localhost:2000/api/getplayertime',
+    type: 'post',
+    data: {
+    },
+    headers: {
+      'x-access-token': token,
+    },
+    dataType: 'json',
+    success: function(data) {
+      console.info(data);
+      playerTime= data.time;
+    }
+  });
 }
