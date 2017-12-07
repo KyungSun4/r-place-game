@@ -39,6 +39,17 @@
       <button id="changeSoldier" class="menuButton" onClick="changeFunction()">Change Soldier Destination</button>
       </br>
     </center>
+    <center>
+      <br>
+      <button id="loginButton" class="loginClass" onClick="login()">Place Wall</button>
+      </br>
+    </center>
+    <br></br>
+    <center>
+      <br>
+      <button id="registerButton" class="loginClass" onClick="register()">Change Soldier Destination</button>
+      </br>
+    </center>
   </div>
 
   <script>
@@ -83,7 +94,20 @@
     // Get the <span> element that closes the modal
     var span = document.getElementsByClassName("close")[0];
 
+    if (token == null) {
+      $("#placeSoldier").hide();
+      $("#placeWall").hide();
+      $("#changeSoldier").hide();
+      $("#loginButton").show();
+      $("#registerButton").show();
 
+    } else {
+      $("#placeSoldier").show();
+      $("#placeWall").show();
+      $("#changeSoldier").show();
+      $("#loginButton").hide();
+      $("#registerButton").hide();
+    }
 
     function soldierFunction() {
       document.getElementById("placeSoldier").disabled = true;
