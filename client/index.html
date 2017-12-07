@@ -39,6 +39,17 @@
       <button id="changeSoldier" class="menuButton" onClick="changeFunction()">Change Soldier Destination</button>
       </br>
     </center>
+    <center>
+      <br>
+      <button id="loginButton" class="loginClass" onClick="login()">Login</button>
+      </br>
+    </center>
+    <br></br>
+    <center>
+      <br>
+      <button id="registerButton" class="loginClass" onClick="register()">Register</button>
+      </br>
+    </center>
   </div>
 
   <script>
@@ -64,10 +75,15 @@
 
     var cursorX = 0;
     var cursorY = 0;
+    var clickedX;
+    var clickedY;
+    var prevLocationX;
+    var prevLocationY;
+    var menuState = "none";
 
     $(window).scroll(function() {
       console.log('scrol');
-      $('.sidebar').css('left',$('body').scrollLeft());
+      $('.sidebar').css('left', $('body').scrollLeft());
       $('.sidebar').css('top', $('body').scrollTop());
     });
 
@@ -84,9 +100,23 @@
     // Get the <span> element that closes the modal
     var span = document.getElementsByClassName("close")[0];
 
+    if (token == null || token == 'null') {
+      $("#placeSoldier").hide();
+      $("#placeWall").hide();
+      $("#changeSoldier").hide();
+      $("#loginButton").show();
+      $("#registerButton").show();
 
+    } else {
+      $("#placeSoldier").show();
+      $("#placeWall").show();
+      $("#changeSoldier").show();
+      $("#loginButton").hide();
+      $("#registerButton").hide();
+    }
 
     function soldierFunction() {
+      menuState = "placeSoldier";
       document.getElementById("placeSoldier").disabled = true;
       setTimeout(function() {
         document.getElementById("placeSoldier").disabled = false;
@@ -99,7 +129,6 @@
       setTimeout(function() {
         document.getElementById("placeSoldier").disabled = false;
       }, 5000);
-
     }
 
     function wallFunction() {
@@ -191,11 +220,18 @@
     window.requestAnimationFrame(loop, canvas);
 
     var click = function() {
-      x = parseInt(mouseX / canvas.width * gridWidth);
-      y = parseInt(mouseY / canvas.height * gridHeight);
-      console.log(x + ", " + y);
+      clickedX = parseInt(mouseX / canvas.width * gridWidth);
+      clickedY = parseInt(mouseY / canvas.height * gridHeight);
+      console.log(clickedX + ", " + clickedY);
       //TODO: procces click as request based on current menu selection
-      placeSoldier(x, y, 1, 0)
+      if (menuState == "placeSoldier") {
+        prevLocationX = clickedX;
+        prevLocationY = clickedY;
+        menuState = 'placeSoldier2nd';
+      } else if (menuState == "placeSoldier2nd") {
+        placeSoldier(prevLocationX, prevLocationY,clickedX, clickedY);
+        console.log("placeSoldireog");
+      }
     }
     var updateCursor = function() {
       cursorX = parseInt(mouseX / canvas.width * gridWidth);
