@@ -79,43 +79,22 @@ MongoClient.connect(url, function(err, db) {
           newMap.push({
             x: x,
             y: y,
-            walls: {
-              top: null,
-              bottom: null,
-              left: null,
-              right: null
-            },
             team: 0,
             object: null,
-            color: "#f44842"
           });
         } else if (x == mapWidth - 1 || x == mapWidth - 2) {
           newMap.push({
             x: x,
             y: y,
-            walls: {
-              top: null,
-              bottom: null,
-              left: null,
-              right: null
-            },
             team: 1,
             object: null,
-            color: "#f44842"
           });
         } else {
           newMap.push({
             x: x,
             y: y,
-            walls: {
-              top: null,
-              bottom: null,
-              left: null,
-              right: null
-            },
             team: null,
             object: null,
-            color: "#f44842"
           });
         }
       }
@@ -186,16 +165,21 @@ var socketlist = {};
 //game logic loop
 var gameLoop = require("./server/gameLoop");
 setInterval(function() {
-  gameLoop();
-  getFullMap(mapWidth, mapHeight, function(map) {
+  gameLoop(function(updated) {
     for (var i in socketlist) {
       var socket = socketlist[i];
-      socket.emit('map', map);
+      //console.log(updated);
+      socket.emit('update', updated);
     }
   });
+
   //socket.emit('start', map);
 }, 1000 / 2); //updates 2 times a second 1Hz
 //gets api.js and sets as routs
 var Routes = require("./routes/api")
 //when connectiong to /api/ will willuse api.js
 app.use('/api', Routes);
+var getSocketList = function() {
+  return socketlist;
+}
+module.exports = getSocketList;

@@ -1,5 +1,8 @@
 var first = true;
-var socket = io({transports: ['websocket'], upgrade: false});
+var socket = io({
+  transports: ['websocket'],
+  upgrade: false
+});
 console.log("hello");
 socket.on('start', function(data) {
   console.log("tes");
@@ -10,5 +13,22 @@ socket.on('start', function(data) {
 socket.on('map', function(data) {
   //console.log("m");
   grid = data;
+  //console.log(sgrid[0][0]);
+});
+socket.on('update', function(data) {
+  //console.log(data);
+  for (var u = 0; u < data.length; u++) {
+    var update = data[u];
+    if (update.object) {
+      if (update.object == 3) {
+        grid[update.y][update.x].object = null;
+      } else {
+        grid[update.y][update.x].object = update.object;
+      }
+    }
+    if (update.team && update.team != 3) {
+      grid[update.y][update.x].team = update.team;
+    }
+  }
   //console.log(sgrid[0][0]);
 });

@@ -64,6 +64,8 @@ function init() {
 
   width = window.innerWidth;
   height = window.innerHeight;
+  canvas.id = "canvas";
+  canvas.style.marginLeft = "200px";
   canvas.width = height * 2 * gridWidth / gridHeight;
   canvas.height = height * 2;
   pointWidth = canvas.height / gridHeight;
@@ -73,6 +75,7 @@ function init() {
   }
   document.body.appendChild(canvas);
   ctx = canvas.getContext("2d");
+
 
   //Control Setup
   keystate = {};

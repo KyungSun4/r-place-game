@@ -11,14 +11,21 @@ for (var y = 0; y < height; y++) {
   }
 }
 var functions = {
+  updated: [],
   //Welcome Callback Land
   //adds soldier to map at defined position does not check if allowed
   placeObject: function(db, x, y, object, callback) {
-    console.log(x + " " + y);
+    //console.log(x + " " + y);
     var query = {}
     query['x'] = Number(x);
     query['y'] = Number(y);
-    console.log(query);
+    //console.log(query);
+    functions.updated.push({
+      x: x,
+      y: y,
+      object: object,
+      team: 3
+    });
     db.collection("map").updateOne(query, {
       $set: {
         "object": object
@@ -26,7 +33,7 @@ var functions = {
     }, function(err, res) {
       if (err) throw err;
       callback(true);
-      console.log(x + " " + y);
+      console.log('object placed at' + x + " " + y);
     });
   },
   //makes sure that nothing else is in the way when placing the soldier, returns true if succeful false othewise
@@ -72,7 +79,7 @@ var functions = {
 
   },
   //updates all walls and soldiers
-  updateObjects: function(db) {
+  updateObjects: function(db,callback) {
     //finds all walls and soldiers and saves to array
     db.collection("map").find({
       object: {
@@ -80,9 +87,7 @@ var functions = {
       }
     }).toArray(function(err, res) {
       if (err) throw err;
-      if(res==null) {
-        console.log(res);
-      }
+      if (res == null) {}
       //create two emety 2D arrays
       soldierLocs = nullArray.slice();
       wallLocs = nullArray.slice();
@@ -92,15 +97,22 @@ var functions = {
       for (var locI = 0; locI < res.length; locI++) {
         loc = res[locI];
         //update territory
-        db.collection("map").updateOne({
-          _id: loc._id
-        }, {
-          $set: {
-            'team': loc.object.team
-          }
-        }, function(err, res) {
-          if (err) throw err;
-        });
+        if (loc.team != loc.object.team) {
+          functions.updated.push({
+            x: loc.x,
+            y: loc.y,
+            team: loc.object.team
+          });
+          db.collection("map").updateOne({
+            _id: loc._id
+          }, {
+            $set: {
+              'team': loc.object.team
+            }
+          }, function(err, res) {
+            if (err) throw err;
+          });
+        }
         //if its a soldier add to array and check if should be added to the toUpdate array
         if (loc.object.type == 'soldier') {
           //console.log(loc);
@@ -119,6 +131,8 @@ var functions = {
       //update all the soldiers that need to be updated
       functions.updateSoldiers(db, toUpdateSoldiersLocs, wallLocs, soldierLocs);
     });
+    callback(functions.updated);
+    functions.updated=[];
   },
   updateSoldiers: function(db, toUpdateSoldiersLocs, wallLocs, soldierLocs) {
     for (var soldierLocI = 0; soldierLocI < toUpdateSoldiersLocs.length; soldierLocI++) {
@@ -127,12 +141,10 @@ var functions = {
         //decrease health of all enemy walls nearby and attack enemy soldiers nearby
         functions.attack(db, currSoldierLoc, wallLocs, soldierLocs);
       }
-      //TODO: try to move soldier
+      //try to move soldier
       if (currSoldierLoc.object.moveTime <= 0) {
         functions.tryMove(db, currSoldierLoc, wallLocs, soldierLocs);
       }
-
-
     }
   },
   tryMove: function(db, soldierLoc, wallLocs, soldierLocs) {
@@ -159,6 +171,11 @@ var functions = {
       soldierLocs[soldierLoc.y + yDir][soldierLoc.x + xDir] = soldierLoc;
 
       //remove soldier from old location
+      functions.updated.push({
+        x: soldierLoc.x,
+        y: soldierLoc.y,
+        object: 3,
+      });
       db.collection("map").updateOne({
         _id: soldierLoc._id
       }, {
@@ -197,31 +214,17 @@ var functions = {
         });
       }
     }
-
-    //this code checks all neightbooring posisiotns, decided bad because would mean 1 soldier could kill 4 surounding it
-    /*
-        //check each neghboring location for an enemy wall
-        directions = [
-          [0, 1],
-          [1, 0],
-          [0, -1],
-          [-1, 0]
-        ];
-        for (var posI = 0; posI < directions.length; posI++) {
-          var pos = directions[posI];
-          var nearbyLocation = wallLocs[soldierLoc.y + pos[0]][soldierLoc.x + pos[1]];
-          if (nearbyLocation != null && nearbyLocation.object.team != soldierLoc.object.team) {
-            //if opposite team, attackTime
-            functions.updateHealth(db, nearbyLocation, soldier.attack);
-          }
-        }
-        */
   },
   updateHealth: function(db, attackedLocation, soldierAttack) {
     object = attackedLocation.object;
     //if object is dead remove it
     if (object.health - soldierAttack <= 0) {
       //remove wall
+      functions.updated.push({
+        x: attackedLocation.x,
+        y: attackedLocation.y,
+        object: 3,
+      });
       db.collection("map").updateOne({
         _id: attackedLocation._id
       }, {
@@ -248,70 +251,14 @@ var functions = {
         if (err) throw err;
       });
       if (object.type == 'soldier') {
-        soldierLocs[attackedLocation.y][attackedLocation.x].health = soldierLocs[attackedLocation.y][attackedLocation.x].health-soldierAttack;
+        soldierLocs[attackedLocation.y][attackedLocation.x].health = soldierLocs[attackedLocation.y][attackedLocation.x].health - soldierAttack;
       } else if (object.type == 'wall') {
-        wallLocs[attackedLocation.y][attackedLocation.x].health = wallLocs[attackedLocation.y][attackedLocation.x].health-soldierAttack;
+        wallLocs[attackedLocation.y][attackedLocation.x].health = wallLocs[attackedLocation.y][attackedLocation.x].health - soldierAttack;
       }
     }
   },
-  //moves soldier at position in direction it is facing x y specifly location of soldier
-  moveSoldier: function(x, y) {
-    functions.getObjectAtPosition(x, y, function(soldier) {
-      //figure out how soldier should move based on Destination
-      functions.placeObject(x + Math.sign(soldier.xDest - x), y + Math.sign(soldier.yDest - x), soldier);
-      functions.removeObject(x, y);
-    });
-  },
-  //moves soldier if nothing in way returns object in way if fails otherswise returns null
-  legalMoveSoldier: function(x, y, callback) {
-    functions.getObjectAtPosition(x, y, function(soldier) {
-      functions.getObjectAtPosition(x + soldier.y + soldier.yDir, y, function(obj) {
-        if (obj == null) {
-          functions.placeObject(x, y, soldier);
-          functions.removeObject(x, y);
-          callback(null);
-        } else {
-          callback(obj);
-        }
-      });
-    });
-  },
-  // change soldierDir unesesary
-  /*
-  //changes soldier dirrection
-  changeSoldierDir: function(x, y, xDir, yDir, callback) {
-    MongoClient.connect(url, function(err, db) {
-      if (err) throw err;
-      var query = {}
-      query['x'] = Number(x);
-      query['y'] = Number(y);
-      db.collection("map").updateOne(query, {
-        $set: {
-          "object.xDir": Number(xDir),
-          "object.yDir": Number(yDir)
-        }
-      }, function(err, res) {
-        if (err) throw err;
-        callback(true);
-      });
-    });
-  },
-  */
-  //clears location
-  removeObject: function(db, x, y) {
-    db.collection("map").updateOne({
-      x: x,
-      y: y
-    }, {
-      $set: {
-        "object": null,
-      }
-    }, function(err, res) {
-      if (err) throw err;
-    });
-  },
-  // decerments all player times
-  updatePlayerTimes: function(db,callback) {
+  //decrement all sodlier counters
+  updateSoldierTimes: function(db, callback) {
     var query = {
       $and: [{
         object: {
@@ -333,8 +280,8 @@ var functions = {
       callback(db);
     });
   },
-  //decrement all sodlier counters
-  updateSoldierTimes: function(db,callback) {
+  // decerments all player times
+  updatePlayerTimes: function(db, callback) {
     var query = {};
     var newvalues = {
       $inc: {
@@ -380,6 +327,12 @@ var functions = {
     var query = {}
     query['x'] = Number(x);
     query['y'] = Number(y);
+    functions.updated.push({
+      x: x,
+      y: y,
+      xDest: xDest,
+      yDest: yDest
+    });
     db.collection("map").updateOne(query, {
       $set: {
         "object.xDest": Number(xDest),
@@ -387,8 +340,29 @@ var functions = {
       }
     }, function(err, res) {
       if (err) throw err;
-      console.log(res);
+      console.log('change soldier dest res:' + res);
       callback(true, "worked");
+    });
+  },
+
+
+
+
+
+
+
+  //UNUSED / DEPRECIATED METHODS BELLOW
+  //clears location
+  removeObject: function(db, x, y) {
+    db.collection("map").updateOne({
+      x: x,
+      y: y
+    }, {
+      $set: {
+        "object": null,
+      }
+    }, function(err, res) {
+      if (err) throw err;
     });
   },
   changeTeamAtLocation: function(db, x, y, team, callback) {
@@ -401,10 +375,32 @@ var functions = {
       }
     }, function(err, res) {
       if (err) throw err;
-      console.log(res);
+      //console.log(res);
       callback(true, "worked");
     });
-  }
+  },
+  //moves soldier at position in direction it is facing x y specifly location of soldier
+  moveSoldier: function(x, y) {
+    functions.getObjectAtPosition(x, y, function(soldier) {
+      //figure out how soldier should move based on Destination
+      functions.placeObject(x + Math.sign(soldier.xDest - x), y + Math.sign(soldier.yDest - x), soldier);
+      functions.removeObject(x, y);
+    });
+  },
+  //moves soldier if nothing in way returns object in way if fails otherswise returns null
+  legalMoveSoldier: function(x, y, callback) {
+    functions.getObjectAtPosition(x, y, function(soldier) {
+      functions.getObjectAtPosition(x + soldier.y + soldier.yDir, y, function(obj) {
+        if (obj == null) {
+          functions.placeObject(x, y, soldier);
+          functions.removeObject(x, y);
+          callback(null);
+        } else {
+          callback(obj);
+        }
+      });
+    });
+  },
 }
 
 module.exports = functions;
