@@ -207,7 +207,7 @@ Routes.post('/team0', function(req, res) {
   }
 });
 
-Routes.post('/getplayertime', function(req, res) {
+Routes.get('/getplayertime', function(req, res) {
   //find user in database
   User.findOne({
     email: req.decoded.email

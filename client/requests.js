@@ -104,9 +104,7 @@ register = function(email, password, password2, username) {
 getPlayerTime = function() {
   $.ajax({
     url: 'http://localhost:2000/api/getplayertime',
-    type: 'post',
-    data: {
-    },
+    type: 'get',
     headers: {
       'x-access-token': token,
     },
