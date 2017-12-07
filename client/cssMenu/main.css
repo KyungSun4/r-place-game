@@ -1,0 +1,65 @@
+
+.wrapper {
+  margin-top: 100px;
+}
+.sidebar p{
+  font-family: "BLOKKNeue-Regular";
+}
+.sidebar {
+  padding: 20px;
+  width: 170px;
+  background-color: #434A54;
+  color: #fff;
+  opacity: 0.75;
+}
+.sidebar h3 {
+  margin: 0;
+}
+.grid {
+  float: left;
+}
+.sidebar {
+
+}
+
+/* Code for Button */
+.menuButton {
+    font-family: Arial, Helvetica, sans-serif;
+    background-color: #4DDBFF;
+    color: white;
+    border: 1px solid #4DDBFF;
+    margin: auto;
+    padding: 10px;
+    border-radius: 5px;
+    font-size: 16px;
+}
+.menuButton:hover {
+    font-family: Arial, Helvetica, sans-serif;
+    background-color: white;
+    color: #4DDBFF;
+    border: 1px solid #4DDBFF;
+    margin: auto;
+    padding: 10px;
+    border-radius: 5px;
+    font-size: 16px;
+    -webkit-transition-duration: 0.4s; /* Safari */
+    transition-duration: 0.4s;
+
+}
+.menuButton:active {
+    font-family: Arial, Helvetica, sans-serif;
+    background-color: #4DDBFF;
+    color: white;
+    border: 1px solid #4DDBFF;
+    margin: auto;
+    padding: 10px;
+    border-radius: 5px;
+    font-size: 30px;
+}
+
+/* The sticky */
+.sidebar {
+  position: absolute;
+  top: 15px;
+  left:15px;
+}
