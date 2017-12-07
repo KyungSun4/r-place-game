@@ -1,17 +1,3 @@
-html {
-  box-sizing: border-box;
-}
-html,
-body {
-  overflow: hidden;
-}
-*, *:before, *:after {
-  box-sizing: inherit;
-}
-body {
-  background-color: #196e76;
-  line-height: 1.2;
-}
 
 .wrapper {
   margin-top: 100px;
@@ -24,6 +10,7 @@ body {
   width: 170px;
   background-color: #434A54;
   color: #fff;
+  opacity: 0.75;
 }
 .sidebar h3 {
   margin: 0;
@@ -32,7 +19,7 @@ body {
   float: left;
 }
 .sidebar {
-  float: right;
+
 }
 
 /* Code for Button */
@@ -72,7 +59,7 @@ body {
 
 /* The sticky */
 .sidebar {
-  position: -webkit-sticky;
-  position: sticky;
+  position: absolute;
   top: 15px;
+  left:15px;
 }

@@ -29,15 +29,15 @@
     </center>
     <br></br>
     <center>
-    <br>
+      <br>
       <button id="placeWall" class="menuButton" onClick="wallFunction()">Place Wall</button>
-    </br>
+      </br>
     </center>
     <br></br>
     <center>
       <br>
-        <button id="changeSoldier" class="menuButton" onClick="changeFunction()">Change Soldier Destination</button>
-    </br>
+      <button id="changeSoldier" class="menuButton" onClick="changeFunction()">Change Soldier Destination</button>
+      </br>
     </center>
   </div>
 
@@ -64,6 +64,13 @@
     var cursorX = 0;
     var cursorY = 0;
 
+    $(window).scroll(function() {
+      console.log('scrol');
+      $('.sidebar').css('left',$('body').scrollLeft());
+      $('.sidebar').css('top', $('body').scrollTop());
+    });
+
+
     // Code for sticky menu
     // Get the button that places the soldier in the modal
     var soldierPlace = document.getElementById("placeSoldier");
@@ -75,37 +82,57 @@
 
     // Get the <span> element that closes the modal
     var span = document.getElementsByClassName("close")[0];
-    
+
 
 
     function soldierFunction() {
-        document.getElementById("placeSoldier").disabled = true;
-        setTimeout(function(){document.getElementById("placeSoldier").disabled = false;},5000);
-          document.getElementById("placeWall").disabled = true;
-          setTimeout(function(){document.getElementById("placeWall").disabled = false;},5000);
+      document.getElementById("placeSoldier").disabled = true;
+      setTimeout(function() {
+        document.getElementById("placeSoldier").disabled = false;
+      }, 5000);
+      document.getElementById("placeWall").disabled = true;
+      setTimeout(function() {
+        document.getElementById("placeWall").disabled = false;
+      }, 5000);
       document.getElementById("changeSoldier").disabled = true;
-        setTimeout(function(){document.getElementById("placeSoldier").disabled = false;},5000);
+      setTimeout(function() {
+        document.getElementById("placeSoldier").disabled = false;
+      }, 5000);
 
     }
+
     function wallFunction() {
-        document.getElementById("placeSoldier").disabled = true;
-        setTimeout(function(){document.getElementById("placeSoldier").disabled = false;},5000);
-          document.getElementById("placeWall").disabled = true;
-          setTimeout(function(){document.getElementById("placeWall").disabled = false;},5000);
-          document.getElementById("changeSoldier").disabled = true;
-        setTimeout(function(){document.getElementById("placeSoldier").disabled = false;},5000);
-          
+      document.getElementById("placeSoldier").disabled = true;
+      setTimeout(function() {
+        document.getElementById("placeSoldier").disabled = false;
+      }, 5000);
+      document.getElementById("placeWall").disabled = true;
+      setTimeout(function() {
+        document.getElementById("placeWall").disabled = false;
+      }, 5000);
+      document.getElementById("changeSoldier").disabled = true;
+      setTimeout(function() {
+        document.getElementById("placeSoldier").disabled = false;
+      }, 5000);
+
     }
+
     function changeFunction() {
-        document.getElementById("placeSoldier").disabled = true;
-        setTimeout(function(){document.getElementById("placeSoldier").disabled = false;},5000);
-          document.getElementById("placeWall").disabled = true;
-          setTimeout(function(){document.getElementById("placeWall").disabled = false;},5000);
-          document.getElementById("changeSoldier").disabled = true;
-        setTimeout(function(){document.getElementById("placeSoldier").disabled = false;},5000);
-          
+      document.getElementById("placeSoldier").disabled = true;
+      setTimeout(function() {
+        document.getElementById("placeSoldier").disabled = false;
+      }, 5000);
+      document.getElementById("placeWall").disabled = true;
+      setTimeout(function() {
+        document.getElementById("placeWall").disabled = false;
+      }, 5000);
+      document.getElementById("changeSoldier").disabled = true;
+      setTimeout(function() {
+        document.getElementById("placeSoldier").disabled = false;
+      }, 5000);
+
     }
-  //Code for sticky menu ends
+    //Code for sticky menu ends
 
 
 
