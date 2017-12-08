@@ -1,0 +1,157 @@
+<!DOCTYPE=html>
+<html>
+
+<head>
+  <meta charset="utf-8" />
+  <title></title>
+  <style>
+    html,
+    body {
+      margin: 0% auto;
+      background-color: 'black';
+    }
+  </style>
+</head>
+
+<body>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="requests.js"></script>
+  <script src="canvasSetup.js"></script>
+
+  <script>
+    var grid
+    var token = localStorage.getItem('token') || null;
+    gridWidth = 60;
+    gridHeight = 30;
+
+    var keystate;
+    var canvas, ctx,
+      canX = [],
+      canY = [],
+      mouseIsDown = 0,
+      touchCount = 0;
+    var tttouch = 0;
+    var width;
+    var height;
+
+    var mouseX;
+    var mouseY;
+    var pointWidth;
+
+    var cursorX = 0;
+    var cursorY = 0;
+
+
+
+    init();
+    var loop = function() {
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        for (var y = 0; y < gridHeight; y++) {
+          for (var x = 0; x < gridWidth; x++) {
+              ctx.fillStyle = "#e2e2e2";
+              ctx.fillRect(x * pointWidth, y * pointHeight, pointWidth, pointHeight);
+              
+              /**
+            if (grid[y][x].team == 0) {
+              ctx.fillStyle = "#13294b";
+              ctx.fillRect(x * pointWidth, y * pointHeight, pointWidth, pointHeight);
+            }
+            if (grid[y][x].team == 1) {
+              ctx.fillStyle = "#E84A27";
+              ctx.fillRect(x * pointWidth, y * pointHeight, pointWidth, pointHeight);
+            }
+            if (grid[y][x].object != null) {
+              if (grid[y][x].object.type == "soldier") {
+                if (grid[y][x].object.team == 0) {
+                  ctx.fillStyle = "blue";
+                  ctx.fillRect(x * pointWidth, y * pointHeight, pointWidth, pointHeight);
+                }
+                if (grid[y][x].object.team == 1) {
+                  ctx.fillStyle = "orange";
+                  ctx.fillRect(x * pointWidth, y * pointHeight, pointWidth, pointHeight);
+                }
+              }
+              if (grid[y][x].object.type == "wall") {
+                if (grid[y][x].object.team == 0) {
+                  ctx.fillStyle = "#4876ba";
+                  ctx.fillRect(x * pointWidth, y * pointHeight, pointWidth, pointHeight);
+                }
+                if (grid[y][x].object.team == 1) {
+                  ctx.fillStyle = "#e8785f";
+                  ctx.fillRect(x * pointWidth, y * pointHeight, pointWidth, pointHeight);
+                }
+              }
+            }
+            **/
+          }
+        }
+        ctx.fillStyle = "black";
+        ctx.lineWidth = "4";
+        ctx.strokeRect(cursorX * pointWidth, cursorY * pointHeight, pointWidth, pointHeight);
+        //window.requestAnimationFrame(loop, canvas);
+    }
+    //window.requestAnimationFrame(function()
+
+    loop();
+
+    var click = function() {
+      x = parseInt(mouseX / canvas.width * gridWidth);
+      y = parseInt(mouseY / canvas.height * gridHeight);
+      console.log(x + ", " + y);
+      //TODO: procces click as request based on current menu selection
+      //placeSoldier(x, y, 1, 0)
+      
+      // Soldier
+      ctx.beginPath();
+      var color = "#0000FF";
+      ctx.fillStyle = color;
+      ctx.arc(x * pointWidth + pointWidth / 2, y * pointHeight + pointWidth / 2, pointWidth / 4, 0, 2 * Math.PI);
+      var i = 0;
+      setInterval(function() {
+            ctx.fill();
+            color = increase_brightness(color, 1);
+            ctx.fillStyle = color;
+            i++;
+            console.log(i);
+      }, 10);
+      ctx.endPath();
+      
+      // Wall
+      ctx.beginPath();
+      ctx.strokeStyle = "black";
+      ctx.fillStyle = "red";
+      ctx.rect(x * pointWidth, y * pointHeight, pointWidth, pointHeight);
+      ctx.stroke();
+      ctx.fill();
+      ctx.endPath();
+      
+      //ctx.fillRect(x * pointWidth, y * pointHeight, pointWidth, pointHeight);
+    }
+    
+    function increase_brightness(hex, percent){
+        // strip the leading # if it's there
+        hex = hex.replace(/^\s*#|\s*$/g, '');
+
+        // convert 3 char codes --> 6, e.g. `E0F` --> `EE00FF`
+        if(hex.length == 3){
+            hex = hex.replace(/(.)/g, '$1$1');
+        }
+
+        var r = parseInt(hex.substr(0, 2), 16),
+            g = parseInt(hex.substr(2, 2), 16),
+            b = parseInt(hex.substr(4, 2), 16);
+
+        return '#' +
+           ((0|(1<<8) + r + (256 - r) * percent / 100).toString(16)).substr(1) +
+           ((0|(1<<8) + g + (256 - g) * percent / 100).toString(16)).substr(1) +
+           ((0|(1<<8) + b + (256 - b) * percent / 100).toString(16)).substr(1);
+    }
+
+    var updateCursor = function() {
+      cursorX = parseInt(mouseX / canvas.width * gridWidth);
+      cursorY = parseInt(mouseY / canvas.height * gridHeight);
+    }
+  </script>
+</body>
+
+</html>
