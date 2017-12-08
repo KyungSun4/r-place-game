@@ -223,119 +223,20 @@ Routes.post('/move', function(req, res) {
       //if user found check if has time to make turn
       if (user.time <= 0) {
 
-        function requestResultCb(success, msg) {
-          //if move was succeful
-          if (success) {
-            //set users time to 10
-            MongoClient.connect(url, function(err, db) {
-              console.log(user.username);
-              if (err) throw err;
-              var myquery = {
-                email: user.email
-              };
-              var newvalues = {
-                $set: {
-                  "time": 10
-                }
-              };
-              User.updateOne(myquery, newvalues, function(err, res) {
-                if (err) throw err;
-                console.log("time reset");
-                db.close();
-              });
-            });
-            //return result
-            res.json({
-              success: success,
-              message: msg
-            });
-          } else {
-            res.json({
-              success: success,
-              message: msg
-            });
-          }
-        }
-
         moveType = req.body.moveType;
 
         //place soldier on map at given location
         if (moveType == "placeSoldier") {
-          if (!(req.body.xDest == req.body.x || req.body.yDest == req.body.y)) {
-            requestResultCb(false, 'Destination' + req.body.yDest + ', ' + req.body.xDest + 'invalid');
-          } else {
-            var soldier = {
-              xDest: req.body.xDest,
-              yDest: req.body.yDest,
-              team: user.team,
-              type: 'soldier',
-              health: 4,
-              attack: 1,
-              attackTime: 10,
-              moveTime: 10,
-            }; //new Soldier();
-            //check if team is correct
-            MongoClient.connect(url, function(err, db) {
-              databaseFunctions.getTeamAtLocation(db, req.body.x, req.body.y, function(locationTeam) {
-                if (locationTeam == user.team) {
-                  //try to place soldier
-                  databaseFunctions.legalPlaceSoldier(db, req.body.x, req.body.y, soldier, function(dres) {
-                    console.log("place soldier at:" + req.body.x + ", " + req.body.y + " " + dres);
-                    requestResultCb(dres, "soldier placed at:" + req.body.x + ", " + req.body.y);
-                  });
-                } else {
-                  requestResultCb(false, "inccorect team, Your team: " + user.team + " location" + req.body.x + ", " + req.body.y + " team: " + locationTeam);
-                }
-              });
-            });
-          }
+          placeSoldier(user, req, res);
         }
         //change soldier Destination
-        if (moveType == "changeSoldierDestination") {
-          //make sure destination is allowed
-          if ((req.body.x == req.body.xDest || req.body.y == req.body.yDest) && req.body.yDest > 0 && req.body.yDest < mapHeight && req.body.xDest > 0 && req.body.xDest < mapWidth) {
-            //check if team is correct
-            databaseFunctions.getSoldierTeam(req.body.x, req.body.y, function(soldierTeam) {
-              if (soldier == user.team) {
-                //try to change soldier destination
-                databaseFunctions.changeSoldierDestination(req.body.x, req.body.y, req.body.xDest, req.body.yDest, function(dres, msg) {
-                  console.log("change soldier at:" + req.body.x + ", " + req.body.y + " destination" + dres);
-                  requestResultCb(dres, ":" + req.body.x + ", " + req.body.y);
-                });
-              } else {
-                requestResultCb(false, "inccorect team, Your team: " + user.team + " location" + req.body.x + ", " + req.body.y + " team: " + soldierTeam);
-              }
-            });
-          }
+        else if (moveType == "changeSoldierDest") {
+          changeSoldierDest(user, req, res);
         }
-        //TODO place wall
-        if (moveType == "placeWall") {
-          if (false) {
-            requestResultCb(false, 'invalid');
-          } else {
-            var wall = {
-              team: user.team,
-              type: 'wall',
-              health: 8,
-            }; //new Soldier();
-            //check if team is correct
-            MongoClient.connect(url, function(err, db) {
-              databaseFunctions.getTeamAtLocation(db, req.body.x, req.body.y, function(locationTeam) {
-                if (locationTeam == user.team) {
-                  //try to place soldier
-                  databaseFunctions.legalPlaceWall(db, req.body.x, req.body.y, wall, function(dres) {
-                    console.log("place wall at:" + req.body.x + ", " + req.body.y + " " + dres);
-                    requestResultCb(dres, "wall placed at:" + req.body.x + ", " + req.body.y);
-                  });
-                } else {
-                  requestResultCb(false, "inccorect team, Your team: " + user.team + " location" + req.body.x + ", " + req.body.y + " team: " + locationTeam);
-                }
-              });
-            });
-          }
+        //place wall
+        else if (moveType == "placeWall") {
+          placeWall(user, req, res);
         }
-
-
       } else {
         res.json({
           success: false,
@@ -348,6 +249,111 @@ Routes.post('/move', function(req, res) {
 
 });
 
+function requestResultCb(user, res, success, msg) {
+  //if move was succeful
+  if (success) {
+    //set users time to 10
+    MongoClient.connect(url, function(err, db) {
+      console.log(user.username);
+      if (err) throw err;
+      var myquery = {
+        email: user.email
+      };
+      var newvalues = {
+        $set: {
+          "time": 10
+        }
+      };
+      User.updateOne(myquery, newvalues, function(err, res) {
+        if (err) throw err;
+        console.log("time reset");
+        db.close();
+      });
+    });
+    //return result
+    res.json({
+      success: success,
+      message: msg
+    });
+  } else {
+    res.json({
+      success: success,
+      message: msg
+    });
+  }
+}
+var placeSoldier = function(user, req, res) {
+  if (!(req.body.xDest == req.body.x || req.body.yDest == req.body.y)) {
+    requestResultCb(user, res, false, 'Destination' + req.body.yDest + ', ' + req.body.xDest + 'invalid');
+  } else {
+    var soldier = {
+      xDest: req.body.xDest,
+      yDest: req.body.yDest,
+      team: user.team,
+      type: 'soldier',
+      health: 4,
+      attack: 1,
+      attackTime: 10,
+      moveTime: 10,
+    }; //new Soldier();
+    //check if team is correct
+    MongoClient.connect(url, function(err, db) {
+      databaseFunctions.getTeamAtLocation(db, req.body.x, req.body.y, function(locationTeam) {
+        if (locationTeam == user.team) {
+          //try to place soldier
+          databaseFunctions.legalPlaceSoldier(db, req.body.x, req.body.y, soldier, function(dres) {
+            console.log("place soldier at:" + req.body.x + ", " + req.body.y + " " + dres);
+            requestResultCb(user, res, dres, "soldier placed at:" + req.body.x + ", " + req.body.y);
+          });
+        } else {
+          requestResultCb(user, res, false, "inccorect team, Your team: " + user.team + " location" + req.body.x + ", " + req.body.y + " team: " + locationTeam);
+        }
+      });
+    });
+  }
+};
+var changeSoldierDest = function(user, req, res) {
+  //make sure destination is allowed
+  if ((req.body.x == req.body.xDest || req.body.y == req.body.yDest) && req.body.yDest > 0 && req.body.yDest < mapHeight && req.body.xDest > 0 && req.body.xDest < mapWidth) {
+    //check if team is correct
+    MongoClient.connect(url, function(err, db) {
+      console.log("chagne dest1");
+      databaseFunctions.getSoldierTeam(db, req.body.x, req.body.y, function(soldierTeam) {
+        if (soldierTeam == user.team) {
+          console.log("chagne dest2");
+          //try to change soldier destination
+          databaseFunctions.changeSoldierDestination(db,req.body.x, req.body.y, req.body.xDest, req.body.yDest, function(dres, msg) {
+            console.log("change soldier at:" + req.body.x + ", " + req.body.y + " destination" + dres);
+            requestResultCb(user, res, dres, ":" + req.body.x + ", " + req.body.y);
+          });
+        } else {
+          requestResultCb(user, res, false, "inccorect team, Your team: " + user.team + " location" + req.body.x + ", " + req.body.y + " team: " + soldierTeam);
+        }
+      });
+    });
+  }
+}
+
+var placeWall = function(user, req, res) {
+  var wall = {
+    team: user.team,
+    type: 'wall',
+    health: 8,
+  }; //new Soldier();
+  //check if team is correct
+  MongoClient.connect(url, function(err, db) {
+    databaseFunctions.getTeamAtLocation(db, req.body.x, req.body.y, function(locationTeam) {
+      if (locationTeam == user.team) {
+        //try to place soldier
+        databaseFunctions.legalPlaceWall(db, req.body.x, req.body.y, wall, function(dres) {
+          requestResultCb(user, res, dres, "place wall at:" + req.body.x + ", " + req.body.y);
+        });
+      } else {
+        requestResultCb(user, res, false, "inccorect team, Your team: " + user.team + " location" + req.body.x + ", " + req.body.y + " team: " + locationTeam);
+      }
+    });
+  });
+}
 Routes.get('/', function(req, res) {
   res.json({
     message: 'it works!'

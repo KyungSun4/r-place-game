@@ -13,7 +13,6 @@ var loop = function(callback) {
           //console.log(updated);
           callback(updated);
         });
-
       });
     });
   });
