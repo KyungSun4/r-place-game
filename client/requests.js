@@ -1,7 +1,10 @@
 //server request functions using Jquery and Ajax requests
+//ip address of server, currently johns computer
+ip = '10.195.198.211';
+
 placeSoldier = function(x, y, xDest, yDest) {
   $.ajax({
-    url: 'http://localhost:2000/api/move',
+    url: 'http://'+ip+':2000/api/move',
     type: 'post',
     data: {
       moveType: 'placeSoldier',
@@ -19,9 +22,29 @@ placeSoldier = function(x, y, xDest, yDest) {
     }
   });
 }
+changeSoldierDest = function(x, y, xDest, yDest) {
+  $.ajax({
+    url: 'http://'+ip+':2000/api/move',
+    type: 'post',
+    data: {
+      moveType: 'changeSoldierDest',
+      x: Number(x),
+      y: Number(y),
+      xDest: xDest,
+      yDest: yDest
+    },
+    headers: {
+      'x-access-token': token,
+    },
+    dataType: 'json',
+    success: function(data) {
+      console.info(data);
+    }
+  });
+}
 placeWall = function(x, y) {
   $.ajax({
-    url: 'http://localhost:2000/api/move',
+    url: 'http://'+ip+':2000/api/move',
     type: 'post',
     data: {
       moveType: 'placeWall',
@@ -60,7 +83,7 @@ changeSoldierDest = function(x, y, xDest, yDest) {
 }
 login = function(email, password) {
   $.ajax({
-    url: 'http://localhost:2000/api/login',
+    url: 'http://'+ip+':2000/api/login',
     type: 'post',
     data: {
       email: email,
@@ -84,7 +107,7 @@ register = function(email, password, password2, username) {
     alert("passwords do not match");
   } else {
     $.ajax({
-      url: 'http://localhost:2000/api/register',
+      url: 'http://'+ip+':2000/api/register',
       type: 'post',
       data: {
         email: email,
