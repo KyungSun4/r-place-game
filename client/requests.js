@@ -63,7 +63,7 @@ placeWall = function(x, y) {
 //server request functions using Jquery and Ajax requests
 changeSoldierDest = function(x, y, xDest, yDest) {
   $.ajax({
-    url: 'http://localhost:2000/api/move',
+    url: 'http://'+ip+':2000/api/move',
     type: 'post',
     data: {
       moveType: 'changeSoldierDest',

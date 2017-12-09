@@ -229,15 +229,23 @@
         prevLocationX = clickedX;
         prevLocationY = clickedY;
         menuState = 'placeSoldier2nd';
+      } else if (menuState == "changeSoldier") {
+        prevLocationX = clickedX;
+        prevLocationY = clickedY;
+        menuState = 'changeSoldier2nd';
+        console.log("changeSoldier");
       } else if (menuState == "placeSoldier2nd") {
         placeSoldier(prevLocationX, prevLocationY,clickedX, clickedY);
         console.log("placeSoldireog");
+        menuState = 'none';
       } else if (menuState == "placeWall") {
-        placeWall(prevLocationX prevLocationY,clickedX, clickedY);
+        placeWall(clickedX, clickedY);
         console.log("placeWallog");
-      } else if (menuState == "changeSoldier") {
-        changeSoldierDest(prevLocationX prevLocationY,clickedX, clickedY);
+        menuState = 'none';
+      } else if (menuState == "changeSoldier2nd") {
+        changeSoldierDest(prevLocationX, prevLocationY,clickedX, clickedY);
         console.log("changedSoldier");
+        menuState = 'none';
       }
     }
     var updateCursor = function() {
