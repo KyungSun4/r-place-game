@@ -131,6 +131,7 @@
     }
 
     function wallFunction() {
+      menuState = "placeWall";
       document.getElementById("placeSoldier").disabled = true;
       setTimeout(function() {
         document.getElementById("placeSoldier").disabled = false;
@@ -147,6 +148,7 @@
     }
 
     function changeFunction() {
+      menuState = "changeSoldier";
       document.getElementById("placeSoldier").disabled = true;
       setTimeout(function() {
         document.getElementById("placeSoldier").disabled = false;
@@ -230,6 +232,12 @@
       } else if (menuState == "placeSoldier2nd") {
         placeSoldier(prevLocationX, prevLocationY,clickedX, clickedY);
         console.log("placeSoldireog");
+      } else if (menuState == "placeWall") {
+        placeWall(prevLocationX prevLocationY,clickedX, clickedY);
+        console.log("placeWallog");
+      } else if (menuState == "changeSoldier") {
+        changeSoldierDest(prevLocationX prevLocationY,clickedX, clickedY);
+        console.log("changedSoldier");
       }
     }
     var updateCursor = function() {
