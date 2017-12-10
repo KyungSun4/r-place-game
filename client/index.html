@@ -126,7 +126,7 @@
       }, 5000);
       document.getElementById("changeSoldier").disabled = true;
       setTimeout(function() {
-        document.getElementById("placeSoldier").disabled = false;
+        document.getElementById("changeSoldier").disabled = false;
       }, 5000);
     }
 
@@ -142,7 +142,7 @@
       }, 5000);
       document.getElementById("changeSoldier").disabled = true;
       setTimeout(function() {
-        document.getElementById("placeSoldier").disabled = false;
+        document.getElementById("changeSoldier").disabled = false;
       }, 5000);
 
     }
@@ -159,7 +159,7 @@
       }, 5000);
       document.getElementById("changeSoldier").disabled = true;
       setTimeout(function() {
-        document.getElementById("placeSoldier").disabled = false;
+        document.getElementById("changeSoldier").disabled = false;
       }, 5000);
 
     }
@@ -225,6 +225,7 @@
       clickedY = parseInt(mouseY / canvas.height * gridHeight);
       console.log(clickedX + ", " + clickedY);
       //TODO: procces click as request based on current menu selection
+      console.log(menuState);
       if (menuState == "placeSoldier") {
         prevLocationX = clickedX;
         prevLocationY = clickedY;
