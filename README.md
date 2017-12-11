@@ -17,12 +17,12 @@ description of project
 #### Socket.IO
 ## API
 ## Authors
-John Han - [KyungSun4](github.com/kyungsun4)
+John Han - [KyungSun4](https://github.com/kyungsun4)
 
-Sriram Rameshbabu - [itssriram98](github.com/itssriram98)
+Sriram Rameshbabu - [itssriram98](https://github.com/itssriram98)
 
 Chaitanya Jujjavarapu - [cnj3](https://github.com/cnj3)
 
-Anoj Lal - [anoojlal](github.com/anoojlal)
+Anoj Lal - [anoojlal](https://github.com/anoojlal)
 ## Acknowledgments
-inspired by [reddit.com/r/place](reddit.com/r/place)
+inspired by [reddit.com/r/place](https://reddit.com/r/place)
