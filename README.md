@@ -16,3 +16,6 @@ description of project
 #### HTTP
 #### Socket.IO
 ## API
+## Authors
+## Acknowledgments
+inspired by reddit.com/r/place
