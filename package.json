@@ -1,4 +1,5 @@
 {
+
   "name": "r-place-game",
   "version": "1.0.0",
   "description": "cs196 project",
@@ -22,7 +23,9 @@
   },
   "devDependencies": {},
   "scripts": {
-    "test": "console.log(\"test\")"
+    "test": "console.log(\"test\")",
+    "start": "node app.js"
+
   },
   "repository": {
     "type": "git",
