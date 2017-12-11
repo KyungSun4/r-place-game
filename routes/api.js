@@ -1,10 +1,10 @@
 var jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
-var User = require('../models/user');
+var User = require('../models/User');
 var express = require('express');
 var Routes = express.Router();
 var MongoClient = require('mongodb').MongoClient;
-var url = "mongodb://127.0.0.1:27017/mydb";
+var url = process.env.PROD_MONGODB || require('../mongoURL');
 var path = require('path');
 var databaseFunctions = require("../server/databaseFunctions");
 

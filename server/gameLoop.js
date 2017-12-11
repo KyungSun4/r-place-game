@@ -1,6 +1,6 @@
 databaseFunctions = require("./databaseFunctions");
 var MongoClient = require('mongodb').MongoClient;
-var url = "mongodb://127.0.0.1:27017/mydb";
+var url = process.env.PROD_MONGODB || require('../mongoURL');
 
 // team, x,y, object
 

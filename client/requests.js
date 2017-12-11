@@ -1,10 +1,10 @@
 //server request functions using Jquery and Ajax requests
 //ip address of server, currently johns computer
-ip = '10.195.198.211';
+address = window.location.href;
 
 placeSoldier = function(x, y, xDest, yDest) {
   $.ajax({
-    url: 'http://'+ip+':2000/api/move',
+    url: address + 'api/move',
     type: 'post',
     data: {
       moveType: 'placeSoldier',
@@ -24,7 +24,7 @@ placeSoldier = function(x, y, xDest, yDest) {
 }
 changeSoldierDest = function(x, y, xDest, yDest) {
   $.ajax({
-    url: 'http://'+ip+':2000/api/move',
+    url: address + 'api/move',
     type: 'post',
     data: {
       moveType: 'changeSoldierDest',
@@ -44,7 +44,7 @@ changeSoldierDest = function(x, y, xDest, yDest) {
 }
 placeWall = function(x, y) {
   $.ajax({
-    url: 'http://'+ip+':2000/api/move',
+    url: address + 'api/move',
     type: 'post',
     data: {
       moveType: 'placeWall',
@@ -63,7 +63,7 @@ placeWall = function(x, y) {
 //server request functions using Jquery and Ajax requests
 changeSoldierDest = function(x, y, xDest, yDest) {
   $.ajax({
-    url: 'http://'+ip+':2000/api/move',
+    url: address + 'api/move',
     type: 'post',
     data: {
       moveType: 'changeSoldierDest',
@@ -83,7 +83,7 @@ changeSoldierDest = function(x, y, xDest, yDest) {
 }
 login = function(email, password) {
   $.ajax({
-    url: 'http://'+ip+':2000/api/login',
+    url: address + 'api/login',
     type: 'post',
     data: {
       email: email,
@@ -107,7 +107,7 @@ register = function(email, password, password2, username) {
     alert("passwords do not match");
   } else {
     $.ajax({
-      url: 'http://'+ip+':2000/api/register',
+      url: address + 'api/register',
       type: 'post',
       data: {
         email: email,
@@ -126,7 +126,7 @@ register = function(email, password, password2, username) {
 
 getPlayerTime = function() {
   $.ajax({
-    url: 'http://'+ip+':2000/api/getplayertime',
+    url: address + 'api/getplayertime',
     type: 'get',
     headers: {
       'x-access-token': token,
@@ -134,7 +134,7 @@ getPlayerTime = function() {
     dataType: 'json',
     success: function(data) {
       console.info(data);
-      playerTime= data.time;
+      playerTime = data.time;
     }
   });
 }

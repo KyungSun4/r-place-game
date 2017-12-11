@@ -1,6 +1,6 @@
-var url = "mongodb://localhost:27017/mydb";
+var url = process.env.PROD_MONGODB || require('../mongoURL');
 var MongoClient = require('mongodb').MongoClient;
-var User = require('../models/user');
+var User = require('../models/User');
 var width = 60;
 var height = 30;
 nullArray = [];
