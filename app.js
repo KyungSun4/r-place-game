@@ -1,7 +1,7 @@
 "use strict";
 var MongoClient = require('mongodb').MongoClient;
 //Create a database named "mydb":
-var url = "mongodb://localhost:27017/mydb";
+var url = process.env.PROD_MONGODB || require('./mongoURL');
 var express = require('express');
 var app = express();
 var serv = require('http').Server(app);
@@ -28,7 +28,7 @@ app.use(express.static('client'))
 var morgan = require('morgan');
 app.use(morgan('dev'));
 
-mongoose.connect('mongodb://localhost:27017/mydb', {
+mongoose.connect(url, {
   useMongoClient: true
 });
 app.use(bodyParser.json());
@@ -46,8 +46,8 @@ app.get('/', function(reg, res) {
 });
 app.use('/client', express.static(__dirname + '/client'));
 
-
-serv.listen(2000);
+var port = process.env.PORT || 2000;
+serv.listen(port);
 var map2;
 
 //if true will create a new map in database
