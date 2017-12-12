@@ -1,7 +1,7 @@
 //server request functions using Jquery and Ajax requests
 //ip address of server, currently johns computer
 address = window.location.href;
-
+var breakTime = 5;
 placeSoldier = function(x, y, xDest, yDest) {
   $.ajax({
     url: address + 'api/move',
@@ -19,6 +19,7 @@ placeSoldier = function(x, y, xDest, yDest) {
     dataType: 'json',
     success: function(data) {
       console.info(data);
+      playerTime = breakTime;
     }
   });
 }
@@ -39,6 +40,7 @@ changeSoldierDest = function(x, y, xDest, yDest) {
     dataType: 'json',
     success: function(data) {
       console.info(data);
+      playerTime = breakTime;
     }
   });
 }
@@ -57,6 +59,7 @@ placeWall = function(x, y) {
     dataType: 'json',
     success: function(data) {
       console.info(data);
+      playerTime = breakTime;
     }
   });
 }
@@ -78,6 +81,7 @@ changeSoldierDest = function(x, y, xDest, yDest) {
     dataType: 'json',
     success: function(data) {
       console.info(data);
+      playerTime = breakTime;
     }
   });
 }
@@ -94,6 +98,7 @@ login = function(email, password) {
       console.info(data);
       token = data.token;
       localStorage.setItem('token', token);
+      getPlayerTime();
     }
   });
 }
@@ -121,6 +126,7 @@ register = function(email, password, password2, username) {
       dataType: 'json',
       success: function(data) {
         console.info(data);
+        getPlayerTime();
       }
     });
   }
@@ -139,6 +145,9 @@ getPlayerTime = function() {
     success: function(data) {
       console.info(data);
       playerTime = data.time;
+      if(playerTime<0) {
+        playerTime=0;
+      }
     }
   });
 }

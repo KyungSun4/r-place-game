@@ -25,6 +25,10 @@
 
   <div class="sidebar">
     <center>
+      <div id="timer">00:00</div>
+    </center>
+    <br></br>
+    <center>
       <button id="placeSoldier" class="menuButton" onClick="soldierFunction()">Place Soldier</button>
     </center>
     <br></br>
@@ -230,9 +234,16 @@
       } else {
         console.log("no grid");
       }
+      document.getElementById('timer').innerHTML= Math.floor(playerTime/60)+":"+(playerTime-Math.floor(playerTime/60)*60);
       window.requestAnimationFrame(loop, canvas);
     }
     window.requestAnimationFrame(loop, canvas);
+
+    setInterval(function() {
+      if(playerTime>0) {
+        playerTime--;
+      }
+    }, 1000);
 
     var click = function() {
       clickedX = parseInt(mouseX / canvas.width * gridWidth);
@@ -267,6 +278,7 @@
       cursorX = parseInt(mouseX / canvas.width * gridWidth);
       cursorY = parseInt(mouseY / canvas.height * gridHeight);
     }
+    getPlayerTime();
   </script>
 </body>
 
