@@ -46,6 +46,95 @@ function startTimer(id, deadline){
 
 
 window.onload = function(){
-  var deadline = new Date("December 6, 2017 19:30:00");
+  var fiveMinutes = new Date();
+  fiveMinutes.setMinutes(fiveMinutes.getMinutes()+5);
+  var deadline = new Date(fiveMinutes);
   startTimer("clock", deadline);
 };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//   function updateTimer(deadline){
+//   var time = deadline - new Date();
+//   return {
+    
+//     'seconds': Math.floor( (time/1000) % 60 ),
+//     'total' : time
+//   };
+// }
+
+
+// function animateClock(span){
+//   span.className = "turn";
+//   setTimeout(function(){
+//     span.className = "";
+//   },700);
+// }
+
+// function startTimer(id, deadline){
+//   var timerInterval = setInterval(function(){
+//     var clock = document.getElementById(id);
+//     var timer = updateTimer(deadline);
+
+//     clock.innerHTML =  '<span>' + timer.seconds + '</span>';
+
+//     //animations
+//     var spans = clock.getElementsByTagName("span");
+//     animateClock(spans[1]);
+//     if(timer.seconds == 59) animateClock(spans[0]);
+    
+
+//     //check for end of timer
+//     if(timer.total < 1){
+//       clearInterval(timerInterval);
+//       clock.innerHTML = '<span>0</span>';
+//     }
+
+
+//   }, 1000);
+// }
+
+
+// window.onload = function(){
+//   var deadline = new Date("December 8, 2017 18:30:00");
+//   startTimer("clock", deadline);
+// };
