@@ -49,8 +49,10 @@ Routes.post('/register', function(req, res) {
       email: req.body.email
     }, function(err, user) {
       if (user) {
-        //TODO should make page stating that account already exists
-        res.sendFile(path.resolve('client/loginFinal.html'));
+        res.json({
+          success:false,
+          message: "account already exists"
+        });
       } else {
         //TODO make sure username us unique
         //hashes password

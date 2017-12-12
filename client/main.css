@@ -158,7 +158,7 @@ h1, h2, h3, h4, h5, h6 {
 
 form {
 		margin: 0 0 2em 0;
-		
+
 
 	}
 
@@ -266,6 +266,8 @@ form {
 	input[type="name"],
 	input[type="password"],
 	input[type="email"],
+  input[type="username"],
+  input[type="password2"],
 	select,
 	textarea {
 		-moz-appearance: none;
@@ -296,6 +298,8 @@ form {
 		input[type="name"]:invalid,
 		input[type="password"]:invalid,
 		input[type="email"]:invalid,
+    input[type="username"]:invalid,
+    input[type="password2"]:invalid,
 		select:invalid,
 		textarea:invalid {
 			box-shadow: none;
@@ -305,6 +309,8 @@ form {
 		input[type="name"]:focus,
 		input[type="password"]:focus,
 		input[type="email"]:focus,
+    input[type="username"]:focus,
+    input[type="password2"]:focus,
 		select:focus,
 		textarea:focus {
 			-moz-animation: focus 0.1s;
@@ -352,6 +358,8 @@ form {
 	input[type="name"],
 	input[type="password"],
 	input[type="email"],
+  input[type="username"],
+  input[type="password2"],
 	select {
 		height: 2.75em;
 	}
@@ -540,7 +548,9 @@ button:disabled,
 		#signup-form input[type="text"],
 		#signup-form input[type="name"],
 		#signup-form input[type="password"],
-		#signup-form input[type="email"] {
+		#signup-form input[type="email"],
+    #signup-form input[type="username"],
+    #signup-form input[type="password2"] {
 			width: 18em;
 			margin-bottom: 1em;
 		}
@@ -565,7 +575,9 @@ button:disabled,
 				#signup-form input[type="type"],
 				#signup-form input[type="name"],
 				#signup-form input[type="password"],
-				#signup-form input[type="email"] {
+				#signup-form input[type="email"],
+        #signup-form input[type="username"],
+        #signup-form input[type="password2"] {
 					width: 100%;
 				}
 
