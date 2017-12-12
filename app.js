@@ -52,8 +52,10 @@ var map2;
 
 //if true will create a new map in database
 var resetMap = true;
-if (process.env.RESETMAP != null) {
+
+if (process.env.RESETMAP != undefined) {
   resetMap = process.env.RESETMAP;
+  console.log(process.env.RESETMAP);
 }
 
 
@@ -106,7 +108,7 @@ MongoClient.connect(url, function(err, db) {
     db.collection("map").insert(newMap, function(err, res) {
       db.close();
       getFullMap(mapWidth, mapHeight, function(map) {
-        console.log(map);
+        //console.log(map);
       });
     });
   }
