@@ -32,6 +32,13 @@ Possible Actions Include:
 - Map
 
 ## Setup
+Install node and clone the repository
+
+mLab can be used as a mongodb database, the connection information for this should be put in a file called `mongoURL.js` that contains the text `module.exports = 'mongodb://<dbuser>:<dbpassword>@ds135966.mlab.com:35966/r-place-game';`
+
+the server can then be run using from the terminal with `node app.js` the database can be reset on startup by changing the varible `resetMap = false` in the file `app.js` line 54
+
+The server can also be run on heroku by importing the code from github. The config vars PROD_MONGODB and RESETMAP should be set to `mongodb://<dbuser>:<dbpassword>@ds135966.mlab.com:35966/r-place-game` and `true` or `false` respectively.
 
 ## How to play
 
