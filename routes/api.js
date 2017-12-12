@@ -50,7 +50,7 @@ Routes.post('/register', function(req, res) {
     }, function(err, user) {
       if (user) {
         res.json({
-          success:false,
+          success: false,
           message: "account already exists"
         });
       } else {
@@ -301,7 +301,7 @@ function requestResultCb(user, res, success, msg) {
 }
 var placeSoldier = function(user, req, res) {
   if (!(req.body.xDest == req.body.x || req.body.yDest == req.body.y)) {
-    requestResultCb(user, res, false, 'Destination' + req.body.yDest + ', ' + req.body.xDest + 'invalid');
+    requestResultCb(user, res, false, 'Destination ' + req.body.yDest + ', ' + req.body.xDest + 'invalid');
   } else {
     var soldier = {
       xDest: req.body.xDest,
@@ -320,7 +320,7 @@ var placeSoldier = function(user, req, res) {
           //try to place soldier
           databaseFunctions.legalPlaceSoldier(db, req.body.x, req.body.y, soldier, function(dres) {
             console.log("place soldier at:" + req.body.x + ", " + req.body.y + " " + dres);
-            requestResultCb(user, res, dres, "soldier placed at:" + req.body.x + ", " + req.body.y);
+            requestResultCb(user, res, dres, "soldier placed at: (" + req.body.x + ", " + req.body.y + ")");
           });
         } else {
           requestResultCb(user, res, false, "inccorect team, Your team: " + user.team + " location" + req.body.x + ", " + req.body.y + " team: " + locationTeam);
@@ -339,7 +339,7 @@ var changeSoldierDest = function(user, req, res) {
         if (soldierTeam == user.team) {
           console.log("chagne dest2");
           //try to change soldier destination
-          databaseFunctions.changeSoldierDestination(db,req.body.x, req.body.y, req.body.xDest, req.body.yDest, function(dres, msg) {
+          databaseFunctions.changeSoldierDestination(db, req.body.x, req.body.y, req.body.xDest, req.body.yDest, function(dres, msg) {
             console.log("change soldier at:" + req.body.x + ", " + req.body.y + " destination" + dres);
             requestResultCb(user, res, dres, ":" + req.body.x + ", " + req.body.y);
           });
@@ -363,7 +363,7 @@ var placeWall = function(user, req, res) {
       if (locationTeam == user.team) {
         //try to place soldier
         databaseFunctions.legalPlaceWall(db, req.body.x, req.body.y, wall, function(dres) {
-          requestResultCb(user, res, dres, "place wall at:" + req.body.x + ", " + req.body.y);
+          requestResultCb(user, res, dres, "place wall at: " + req.body.x + ", " + req.body.y);
         });
       } else {
         requestResultCb(user, res, false, "inccorect team, Your team: " + user.team + " location" + req.body.x + ", " + req.body.y + " team: " + locationTeam);
