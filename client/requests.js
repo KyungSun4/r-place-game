@@ -144,7 +144,7 @@ getPlayerTime = function() {
     dataType: 'json',
     success: function(data) {
       console.info(data);
-      playerTime = data.time;
+      playerTime = data.time/2;
       if(playerTime<0) {
         playerTime=0;
       }
