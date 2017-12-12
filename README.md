@@ -10,8 +10,6 @@ determined amount of time.
 
 ## Motivation
 
-A short description of the motivation behind the creation and maintenance of the project. This should explain **why** the project exists.
-
 This project exists as a continuation of the r/Place game and as a way for fans of the game or anyone to spend time on a game which will
 test their creativity as well as their algorithmic thinking skills. With collaborative efforts, our team proceeded to expand our knowledge
 on backend and frontend work by utilizing languages such as Javascript, HTML/CSS, and other extensions as well as database software like 
