@@ -107,7 +107,7 @@ var functions = {
             _id: loc._id
           }, {
             $set: {
-              'team': loc.object.team
+              'team': Number(loc.object.team)
             }
           }, function(err, res) {
             if (err) throw err;
@@ -344,6 +344,26 @@ var functions = {
       callback(true, "worked");
     });
   },
+  getScores: function(db,callback) {
+    scores= {
+      none:0,
+      zero:0,
+      one:0
+    };
+    db.collection('map').count({'team':null},function(err, res1) {
+      if (err) throw err;
+      scores.none=res1;
+      db.collection('map').count({'team':0},function(err, res2) {
+        if (err) throw err;
+        scores.zero=res2;
+        db.collection('map').count({'team':1},function(err, res3) {
+          if (err) throw err;
+          scores.one=res3;
+          callback(scores);
+        });
+      });
+    });
+  },
 
 
 
@@ -371,7 +391,7 @@ var functions = {
     query['y'] = Number(y);
     db.collection("map").updateOne(query, {
       $set: {
-        "team": team,
+        "team": Number(team),
       }
     }, function(err, res) {
       if (err) throw err;

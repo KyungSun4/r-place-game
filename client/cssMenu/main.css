@@ -1,4 +1,6 @@
-
+body {
+  font-family: 'Arial';
+}
 .wrapper {
   margin-top: 100px;
 }
