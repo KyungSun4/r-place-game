@@ -54,7 +54,11 @@ var map2;
 var resetMap = false;
 
 if (process.env.RESETMAP != undefined) {
-  resetMap = process.env.RESETMAP;
+  if(process.env.RESETMAP=="true") {
+    resetMap = true;
+  } else if(process.env.RESETMAP=="false"){
+    resetMap = false;
+  }
   console.log(process.env.RESETMAP);
 }
 
@@ -63,13 +67,9 @@ if (process.env.RESETMAP != undefined) {
 MongoClient.connect(url, function(err, db) {
   if (err) throw err;
   //restarts whole game incliding database
-  if (process.env.RESETMAP != undefined) {
-    resetMap = process.env.RESETMAP;
-    console.log(process.env.RESETMAP);
-  }
-
+  console.log('resmapd:'+resetMap);
   if (resetMap==true) {
-    console.log(resetMap);
+
     //delete old maps
     db.collection('map', function(err, collection) {
       collection.remove({}, function(err, removed) {});
