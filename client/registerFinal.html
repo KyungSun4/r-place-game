@@ -4,6 +4,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 	<link rel="stylesheet" href="main.css" />
 	<title>Sign Up</title>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 <style>
 	body {
 	    background-color: black;
@@ -14,7 +15,8 @@
 	<div class="content" style="margin-bottom: auto;">
 
 		<h1>Sign Up</h1>
-		<form id="signup-form" method="post" action="#" >
+		<h2 id ="message"></h2>
+		<form id="signup-form" action="javascript:registerForm();" >
 			<div>
 				<input type="username" name="username" id="name" placeholder="Your Name">
 			</div>
@@ -33,6 +35,35 @@
 
 		</form>
 	</div>
-	<!--<script src="assets/js/main.js"></script>-->
+	<script>
+	register = function(email, password, password2, username) {
+	  if (password != password2) {
+	    alert("passwords do not match");
+	  } else {
+	    $.ajax({
+	      url: window.location.href,
+	      type: 'post',
+	      data: {
+	        email: email,
+	        username: username,
+	        password: password
+	      },
+	      dataType: 'json',
+				success: function(data) {
+					console.info(data);
+					if(data.success) {
+						window.location.replace(window.location.href.substring(0,window.location.href.length-12)+"api/login")
+					} else {
+						document.getElementById('message').innerHTML = data.message;
+					}
+				}
+	    });
+	  }
+	}
+
+	registerForm = function() {
+		register(document.getElementById('email').value, document.getElementById('password').value,document.getElementById('password2').value,document.getElementById('name').value);
+	}
+	</script>
 </body>
 </html>
