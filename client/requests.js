@@ -18,6 +18,7 @@ placeSoldier = function(x, y, xDest, yDest) {
     },
     dataType: 'json',
     success: function(data) {
+      document.getElementById('message').innerHTML = data.message;
       console.info(data);
       playerTime = breakTime;
     }
@@ -39,6 +40,7 @@ changeSoldierDest = function(x, y, xDest, yDest) {
     },
     dataType: 'json',
     success: function(data) {
+      document.getElementById('message').innerHTML = data.message;
       console.info(data);
       playerTime = breakTime;
     }
@@ -58,6 +60,7 @@ placeWall = function(x, y) {
     },
     dataType: 'json',
     success: function(data) {
+      document.getElementById('message').innerHTML = data.message;
       console.info(data);
       playerTime = breakTime;
     }
@@ -80,6 +83,7 @@ changeSoldierDest = function(x, y, xDest, yDest) {
     },
     dataType: 'json',
     success: function(data) {
+      document.getElementById('message').innerHTML = data.message;
       console.info(data);
       playerTime = breakTime;
     }
