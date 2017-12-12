@@ -65,7 +65,7 @@ function init() {
   width = window.innerWidth;
   height = window.innerHeight;
   canvas.id = "canvas";
-  canvas.style.marginLeft = "200px";
+  canvas.style.marginLeft = "230px";
   canvas.width = height * 2 * gridWidth / gridHeight;
   canvas.height = height * 2;
   pointWidth = canvas.height / gridHeight;
@@ -85,6 +85,22 @@ function init() {
   });
   document.addEventListener("keyup", function(evt) {
     delete keystate[evt.keyCode];
+    if(evt.key=="-") {
+      width*=.9;
+      height*=.9;
+      canvas.width = height * 2 * gridWidth / gridHeight;
+      canvas.height = height * 2;
+      pointWidth = canvas.height / gridHeight;
+      pointHeight = canvas.height / gridHeight;
+    }
+    if(evt.key=="+"||evt.key=="=") {
+      width*=1.1;
+      height*=1.1;
+      canvas.width = height * 2 * gridWidth / gridHeight;
+      canvas.height = height * 2;
+      pointWidth = canvas.height / gridHeight;
+      pointHeight = canvas.height / gridHeight;
+    }
   });
   //touch control
   canvas.addEventListener("mousedown", mouseDown, false);

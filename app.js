@@ -113,7 +113,7 @@ MongoClient.connect(url, function(err, db) {
     db.collection("map").insert(newMap, function(err, res) {
       db.close();
       getFullMap(mapWidth, mapHeight, function(map) {
-        //console.log(map);
+        console.log(map);
       });
     });
   }
