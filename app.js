@@ -52,6 +52,10 @@ var map2;
 
 //if true will create a new map in database
 var resetMap = true;
+if (process.env.RESETMAP != null) {
+  resetMap = process.env.RESETMAP;
+}
+
 
 //connect to database
 MongoClient.connect(url, function(err, db) {
