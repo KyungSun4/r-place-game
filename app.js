@@ -51,7 +51,7 @@ serv.listen(port);
 var map2;
 
 //if true will create a new map in database
-var resetMap = true;
+var resetMap = false;
 
 if (process.env.RESETMAP != undefined) {
   resetMap = process.env.RESETMAP;
@@ -65,6 +65,7 @@ MongoClient.connect(url, function(err, db) {
   //restarts whole game incliding database
 
   if (resetMap) {
+    console.log(resetMap);
     //delete old maps
     db.collection('map', function(err, collection) {
       collection.remove({}, function(err, removed) {});
