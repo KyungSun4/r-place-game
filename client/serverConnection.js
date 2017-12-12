@@ -35,6 +35,5 @@ socket.on('update', function(data) {
 
 socket.on('scores', function(data) {
   total = data.zero+data.one+data.none;
-  console.log(data);
   document.getElementById('scores').innerHTML = "Blue: "+ Math.round(data.zero/total*1000)/10+"%, "+"None: "+ Math.round(data.none/total*1000)/10+"%, "+"Orange: "+ Math.round(data.one/total*1000)/10+"%";
 });
