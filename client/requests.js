@@ -98,6 +98,10 @@ login = function(email, password) {
   });
 }
 
+loginForm = function() {
+  login(getElementById('email').value,getElementById('password'));
+}
+
 logout = function() {
   localStorage.setItem('token', null);
 }

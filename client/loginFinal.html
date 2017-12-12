@@ -1,32 +1,63 @@
 <!DOCTYPE html>
 <html>
+
 <head>
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 	<link rel="stylesheet" href="main.css" />
 	<title>Login</title>
-<style>
-	body {
-	    background-color: black;
-	}
-</style>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+	<style>
+		body {
+			background-color: black;
+		}
+	</style>
 </head>
+
 <body>
 	<div class="content">
 
 		<h1>Login</h1>
-		<form id="signup-form" method="post" action="#" >
+		<h2 id ="message"></h2>
+		<form id="signup-form" action="javascript:loginForm();">
 			<div>
-			    <input type="email" name="email" id="email" value="" placeholder="email" >
+				<input type="email" name="email" id="email" value="" placeholder="email">
 			</div>
 			<div>
-			    <input type="password" name="password" id="password" value="" placeholder="Password" >
+				<input type="password" name="password" id="password" value="" placeholder="Password">
 			</div>
 			<div>
-			    <input type="submit" value="Login" >
-		    </div>
-		</form>
+				<input type= "submit" value="Sign Up"/>
+			</div>
+		</div>
 		<a href="/api/register"><h4>Sign up!</h4></a>
 	</div>
+	<script>
+		login = function(email, password) {
+			$.ajax({
+				url: window.location.href,
+				type: 'post',
+				data: {
+					email: email,
+					password: password
+				},
+				dataType: 'json',
+				success: function(data) {
+					console.info(data);
+					token = data.token;
+					localStorage.setItem('token', token);
+					if(data.success) {
+						window.location.replace(window.location.href.substring(0,window.location.href.length-9))
+					} else {
+						document.getElementById('message').innerHTML = data.message;
+					}
+				}
+			});
+		}
 
+		loginForm = function() {
+			login(document.getElementById('email').value, document.getElementById('password').value);
+		}
+	</script>
 </body>
+
 </html>
