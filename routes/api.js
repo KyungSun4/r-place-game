@@ -9,8 +9,8 @@ var path = require('path');
 var databaseFunctions = require("../server/databaseFunctions");
 
 
-var mapWidth = 10;
-var mapHeight = 10;
+var mapWidth = 60;
+var mapHeight = 30;
 Routes.use('/a', express.static(__dirname + '../client'));
 
 //sends registerFinal.html when connecting to pay /api/routes
@@ -20,27 +20,7 @@ Routes.get('/register', function(req, res) {
 Routes.get('/main.css', function(req, res) {
   res.sendFile(path.resolve('client/main.css'));
 });
-Routes.post('/resetTime', function(req, res) {
-  MongoClient.connect(url, function(err, db) {
-    if (err) throw err;
-    var myquery = {
-      email: req.body.email
-    };
-    var newvalues = {
-      $set: {
-        "time": 0
-      }
-    };
-    User.updateOne(myquery, newvalues, function(err, res) {
-      if (err) throw err;
-      console.log("time reset");
-      db.close();
-    });
-  });
-  res.json({
-    success: true
-  });
-});
+
 //proccesses form submission from register
 Routes.post('/register', function(req, res) {
   //check if user already exists
@@ -331,7 +311,7 @@ var placeSoldier = function(user, req, res) {
 };
 var changeSoldierDest = function(user, req, res) {
   //make sure destination is allowed
-  if ((req.body.x == req.body.xDest || req.body.y == req.body.yDest) && req.body.yDest > 0 && req.body.yDest < mapHeight && req.body.xDest > 0 && req.body.xDest < mapWidth) {
+  if ((req.body.x == req.body.xDest || req.body.y == req.body.yDest) && req.body.yDest >= 0 && req.body.yDest < mapHeight && req.body.xDest > 0 && req.body.xDest < mapWidth) {
     //check if team is correct
     MongoClient.connect(url, function(err, db) {
       console.log("chagne dest1");
@@ -348,6 +328,8 @@ var changeSoldierDest = function(user, req, res) {
         }
       });
     });
+  } else {
+    requestResultCb(user, res, false, "invalid destination"+mapHeight);
   }
 }
 
@@ -379,11 +361,5 @@ Routes.get('/', function(req, res) {
 
 
 
-///remove this latter
-Routes.get('/users', function(req, res) {
-  User.find({}, function(err, users) {
-    res.json(users);
-  });
-});
 
 module.exports = Routes;

@@ -32,8 +32,8 @@ changeSoldierDest = function(x, y, xDest, yDest) {
       moveType: 'changeSoldierDest',
       x: Number(x),
       y: Number(y),
-      xDest: xDest,
-      yDest: yDest
+      xDest: Number(xDest),
+      yDest: Number(yDest)
     },
     headers: {
       'x-access-token': token,
