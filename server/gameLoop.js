@@ -11,7 +11,9 @@ var loop = function(callback) {
       databaseFunctions.updateSoldierTimes(db, function() {
         databaseFunctions.updateObjects(db,function(updated) {
           //console.log(updated);
-          callback(updated);
+          databaseFunctions.getScores(db,function(scores) {
+            callback(updated,scores);
+          });
         });
       });
     });

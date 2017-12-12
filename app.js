@@ -176,11 +176,12 @@ var socketlist = {};
 //game logic loop
 var gameLoop = require("./server/gameLoop");
 setInterval(function() {
-  gameLoop(function(updated) {
+  gameLoop(function(updated,scores) {
     for (var i in socketlist) {
       var socket = socketlist[i];
       //console.log(updated);
       socket.emit('update', updated);
+      socket.emit('scores', scores);
     }
   });
 
