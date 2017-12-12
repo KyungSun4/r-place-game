@@ -63,8 +63,12 @@ if (process.env.RESETMAP != undefined) {
 MongoClient.connect(url, function(err, db) {
   if (err) throw err;
   //restarts whole game incliding database
+  if (process.env.RESETMAP != undefined) {
+    resetMap = process.env.RESETMAP;
+    console.log(process.env.RESETMAP);
+  }
 
-  if (resetMap) {
+  if (resetMap==true) {
     console.log(resetMap);
     //delete old maps
     db.collection('map', function(err, collection) {
